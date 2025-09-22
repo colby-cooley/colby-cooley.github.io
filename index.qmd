@@ -1,11 +1,9 @@
 ---
-title: "colby-cooley.github.io"
+title: "Colby Cooley"
+image: 50c04641-be98-485b-bae4-cd448b3745ca.JPG
+toc: false
+about: 
+  template: jolla
+  image-shape: rounded
+  image-width: 17em
 ---
-
-This is a Quarto website.
-
-To learn more about Quarto websites visit <https://quarto.org/docs/websites>.
-
-```{r}
-1 + 1
-```
