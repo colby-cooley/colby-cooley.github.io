@@ -6,4 +6,9 @@ about:
   template: jolla
   image-shape: round
   image-width: 17em
+  links: 
+    - text: GitHub Repo
+      href: https://github.com/colby-cooley/colby-cooley.github.io
 ---
+
+Hi there! I'm Colby. I am a student at Pomona College and I'm interested in studying data science, economics, and math. I also play for the Pomona-Pitzer football team and love hanging out with friends in my spare time. Poke around my website to learn more!
