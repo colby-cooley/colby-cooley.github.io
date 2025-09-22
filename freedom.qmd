@@ -1,0 +1,36 @@
+---
+title: "Freedom"
+description: |
+  Analysis of freedom data of world countries from TidyTuesday
+author: Colby Cooley
+date: September 22, 2025
+format: html
+execute: 
+  warning: false
+  message: false
+---
+
+Original Source: Freedom House & United Nations. (2022). Freedom Index / Freedom in the World dataset. Used in #TidyTuesday (2022-02-22). Freedom House; United Nations.
+
+TidyTuesday Page: https://github.com/rfordatascience/tidytuesday/tree/main/data/2022/2022-02-22
+
+```{r}
+library(tidyverse)
+```
+
+```{r}
+tuesdata <- tidytuesdayR::tt_load('2022-02-22')
+
+freedom <- tuesdata$freedom
+
+freedom <- freedom |> 
+  mutate(status_full = case_when(Status == "F"  ~ "Free", Status == "PF" ~ "Partly Free", Status == "NF" ~ "Not Free", TRUE ~ Status))
+```
+
+```{r}
+ggplot(freedom, aes(x = CL, y = PR, color = status_full)) +
+  geom_jitter(width = 0.2, height = 0.2, alpha = 0.7) +
+  scale_color_manual(values = c("Free" = "seagreen3", "Partly Free" = "goldenrod", "Not Free" = "firebrick")) +
+  labs(title = "Political Rights v.s. Civil Liberties Showing Freedom Status", x = "Civil Liberties Score(1 = most, 7 = least)", y = "Political Rights Score(1 = most, 7 = least)", color = "Status") +
+  theme_minimal()
+```

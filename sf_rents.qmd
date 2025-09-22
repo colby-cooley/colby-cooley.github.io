@@ -1,0 +1,33 @@
+---
+title: "San Francisco Rents"
+description: |
+  Analysis of San Francisco rent data of rentals from TidyTuesday
+author: Colby Cooley
+date: September 22, 2025
+format: html
+execute: 
+  warning: false
+  message: false
+---
+
+Original Source:
+Pennington, Kate (2018). Bay Area Craigslist Rental Housing Posts, 2000-2018. Retrieved from https://github.com/katepennington/historic_bay_area_craigslist_housing_posts/blob/master/clean_2000_2018.csv.zip.
+
+TidyTuesday Page: https://github.com/rfordatascience/tidytuesday/tree/main/data/2022/2022-07-05
+
+```{r}
+library(tidyverse)
+```
+
+```{r}
+tuesdata <- tidytuesdayR::tt_load('2022-07-05')
+rent <- tuesdata$rent
+```
+
+```{r}
+ggplot(rent, aes(x = price)) +
+  geom_boxplot() +
+  facet_wrap("county") +
+  labs(title = "Prices of Rentals in Different San Francisco Counties", x = "Price(USD)") +
+  theme_minimal()
+```

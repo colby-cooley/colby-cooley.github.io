@@ -1,5 +1,19 @@
 [
   {
+    "objectID": "sf_rents.html",
+    "href": "sf_rents.html",
+    "title": "San Francisco Rents",
+    "section": "",
+    "text": "Original Source: Pennington, Kate (2018). Bay Area Craigslist Rental Housing Posts, 2000-2018. Retrieved from https://github.com/katepennington/historic_bay_area_craigslist_housing_posts/blob/master/clean_2000_2018.csv.zip.\nTidyTuesday Page: https://github.com/rfordatascience/tidytuesday/tree/main/data/2022/2022-07-05\n\nlibrary(tidyverse)\n\n\ntuesdata &lt;- tidytuesdayR::tt_load('2022-07-05')\nrent &lt;- tuesdata$rent\n\n\nggplot(rent, aes(x = price)) +\n  geom_boxplot() +\n  facet_wrap(\"county\") +\n  labs(title = \"Prices of Rentals in Different San Francisco Counties\", x = \"Price(USD)\") +\n  theme_minimal()"
+  },
+  {
+    "objectID": "freedom.html",
+    "href": "freedom.html",
+    "title": "Freedom",
+    "section": "",
+    "text": "Original Source: Freedom House & United Nations. (2022). Freedom Index / Freedom in the World dataset. Used in #TidyTuesday (2022-02-22). Freedom House; United Nations.\nTidyTuesday Page: https://github.com/rfordatascience/tidytuesday/tree/main/data/2022/2022-02-22\n\nlibrary(tidyverse)\n\n\ntuesdata &lt;- tidytuesdayR::tt_load('2022-02-22')\n\nfreedom &lt;- tuesdata$freedom\n\nfreedom &lt;- freedom |&gt; \n  mutate(status_full = case_when(Status == \"F\"  ~ \"Free\", Status == \"PF\" ~ \"Partly Free\", Status == \"NF\" ~ \"Not Free\", TRUE ~ Status))\n\n\nggplot(freedom, aes(x = CL, y = PR, color = status_full)) +\n  geom_jitter(width = 0.2, height = 0.2, alpha = 0.7) +\n  scale_color_manual(values = c(\"Free\" = \"seagreen3\", \"Partly Free\" = \"goldenrod\", \"Not Free\" = \"firebrick\")) +\n  labs(title = \"Political Rights v.s. Civil Liberties Showing Freedom Status\", x = \"Civil Liberties Score(1 = most, 7 = least)\", y = \"Political Rights Score(1 = most, 7 = least)\", color = \"Status\") +\n  theme_minimal()"
+  },
+  {
     "objectID": "index.html",
     "href": "index.html",
     "title": "Colby Cooley",

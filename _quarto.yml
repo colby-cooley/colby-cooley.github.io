@@ -9,6 +9,10 @@ website:
       - href: index.qmd
         text: Home
       - about.qmd
+      - text: "Data Viz"
+        menu: 
+          - freedom.qmd
+          - sf_rents.qmd
 
 format:
   html:
