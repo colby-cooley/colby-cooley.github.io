@@ -1,6 +1,6 @@
 ---
 title: "Colby Cooley"
-image: Downloads/websitepic.JPG
+image: images/websitepic.JPG
 toc: false
 about: 
   template: jolla
