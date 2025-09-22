@@ -3,20 +3,22 @@ project:
   output-dir: docs
 
 website:
-  title: "colby-cooley.github.io"
+  title: "Colby Cooley"
   navbar:
     left:
       - href: index.qmd
         text: Home
       - about.qmd
+      - DataViz.qmd
 
 format:
   html:
-    theme:
-      - cosmo
-      - brand
+    theme: 
+      light: minty
+      dark: solar
     css: styles.css
     toc: true
+    page-layout: full
 
 editor: visual
 

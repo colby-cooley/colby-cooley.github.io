@@ -1,9 +1,9 @@
 ---
 title: "Colby Cooley"
-image: 50c04641-be98-485b-bae4-cd448b3745ca.JPG
+image: Downloads/websitepic.JPG
 toc: false
 about: 
   template: jolla
-  image-shape: rounded
+  image-shape: round
   image-width: 17em
 ---
