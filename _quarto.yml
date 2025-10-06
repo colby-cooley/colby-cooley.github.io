@@ -13,6 +13,7 @@ website:
         menu: 
           - freedom.qmd
           - sf_rents.qmd
+          - obama_tweets.qmd
 
 format:
   html:
