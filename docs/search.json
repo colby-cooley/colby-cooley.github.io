@@ -1,0 +1,30 @@
+[
+  {
+    "objectID": "sf_rents.html",
+    "href": "sf_rents.html",
+    "title": "San Francisco Rents",
+    "section": "",
+    "text": "Original Source: Pennington, Kate (2018). Bay Area Craigslist Rental Housing Posts, 2000-2018. Retrieved from https://github.com/katepennington/historic_bay_area_craigslist_housing_posts/blob/master/clean_2000_2018.csv.zip.\nTidyTuesday Page: https://github.com/rfordatascience/tidytuesday/tree/main/data/2022/2022-07-05\n\nlibrary(tidyverse)\n\n\ntuesdata &lt;- tidytuesdayR::tt_load('2022-07-05')\nrent &lt;- tuesdata$rent\n\n\nggplot(rent, aes(x = price)) +\n  geom_boxplot() +\n  facet_wrap(\"county\") +\n  labs(title = \"Prices of Rentals in Different San Francisco Counties\", x = \"Price(USD)\") +\n  theme_minimal()"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Colby Cooley",
+    "section": "",
+    "text": "Hi there! I’m Colby. I am a student at Pomona College and I’m interested in studying data science, economics, and math. I also play for the Pomona-Pitzer football team and love hanging out with friends in my spare time. Poke around my website to learn more!"
+  },
+  {
+    "objectID": "freedom.html",
+    "href": "freedom.html",
+    "title": "Freedom",
+    "section": "",
+    "text": "Original Source: Freedom House & United Nations. (2022). Freedom Index / Freedom in the World dataset. Used in #TidyTuesday (2022-02-22). Freedom House; United Nations.\nTidyTuesday Page: https://github.com/rfordatascience/tidytuesday/tree/main/data/2022/2022-02-22\n\nlibrary(tidyverse)\n\n\ntuesdata &lt;- tidytuesdayR::tt_load('2022-02-22')\n\nfreedom &lt;- tuesdata$freedom\n\nfreedom &lt;- freedom |&gt; \n  mutate(status_full = case_when(Status == \"F\"  ~ \"Free\", Status == \"PF\" ~ \"Partly Free\", Status == \"NF\" ~ \"Not Free\", TRUE ~ Status))\n\n\nggplot(freedom, aes(x = CL, y = PR, color = status_full)) +\n  geom_jitter(width = 0.2, height = 0.2, alpha = 0.7) +\n  scale_color_manual(values = c(\"Free\" = \"seagreen3\", \"Partly Free\" = \"goldenrod\", \"Not Free\" = \"firebrick\")) +\n  labs(title = \"Political Rights v.s. Civil Liberties Showing Freedom Status\", x = \"Civil Liberties Score(1 = most, 7 = least)\", y = \"Political Rights Score(1 = most, 7 = least)\", color = \"Status\") +\n  theme_minimal()"
+  },
+  {
+    "objectID": "obama_tweets.html",
+    "href": "obama_tweets.html",
+    "title": "Obama Tweets",
+    "section": "",
+    "text": "Data from: National Archives and Records Administration. (n.d.). Obama White House social media archive: Tweets. Retrieved from Obama Federal Archives: Barack Obama Presidential Library. obamalibrary.gov\n\nlibrary(tidyverse)\n\n\nobama_tweets &lt;- read_csv(unz(\"data/POTUS111716.zip\", \"tweets.csv\"))\nobama_tweets &lt;- obama_tweets |&gt; select(text, timestamp)\n\n\nobama_tweets &lt;- obama_tweets |&gt; mutate(hashtags = str_extract_all(text, \"(?&lt;=#)\\\\w+\"))\n\n\nobama_hashtags &lt;- obama_tweets |&gt; select(hashtags) |&gt; unnest(hashtags) |&gt; group_by(hashtags) |&gt; summarize(count = n()) |&gt; arrange(desc(count)) |&gt; head(5)\n\nThe following plot shows Obama’s most used hashtags, revealing which issues he emphasized publicly. It also illustrates some of the ways that the former president used Twitter to engage with the general public.\n\nggplot(obama_hashtags, aes(x = hashtags, y = count, fill = hashtags)) +\n  geom_col(show.legend = FALSE) +\n  labs(title = \"Frequency of Obama's Top Five Most Used Twitter Hashtags\", x = \"Hashtag\", y = \"Frequency\")\n\n\n\n\n\n\n\n\n\nobama_tweets &lt;- obama_tweets |&gt; \n  mutate(text_clean = str_replace_all(text, \"https?://\\\\S+|@\\\\w+\", \"\"), text_clean = str_to_lower(text_clean))\n\n\nobama_tweets &lt;- obama_tweets |&gt; mutate(collective_count = str_count(text_clean, \"\\\\b(we|us|our|ours|we're|we've)\\\\b\"), individual_count = str_count(text_clean, \"\\\\b(i|me|my|mine|i've|i'm)\\\\b\"))\n\n\nobama_pronouns &lt;- obama_tweets |&gt; pivot_longer(c(collective_count, individual_count), names_to = \"pronoun_type\", values_to = \"count\")\n\nThe following plot shows the distribution of collective pronouns(i.e. we/us/our) in Obama’s tweets as well as the distribution of individual pronouns(i.e. I/me/my) in Obama’s tweets. It gives us insight into how Obama purposefully focused his tweets on unity and shared identity rather than on himself.\n\nggplot(obama_pronouns, aes(x = count)) +\n  facet_grid(\"pronoun_type\", labeller = labeller(pronoun_type = c(collective_count = \"Collective\",\n  individual_count = \"Individual\"))) +\n  geom_boxplot() +\n  scale_x_log10() +\n  labs(title = \"Distribution of Collective vs. Individual Pronouns in Obama's Tweets (Log Scale)\", x = \"Pronoun Count per Tweet (log scale)\")"
+  }
+]
