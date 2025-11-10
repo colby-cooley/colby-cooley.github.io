@@ -17,6 +17,9 @@ website:
       - text: "Simulations"
         menu: 
           - movie_genre.qmd
+      - text: "Ethics"
+        menu:
+          - taxi.qmd
 
 format:
   html:

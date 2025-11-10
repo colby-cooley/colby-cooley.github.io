@@ -7,10 +7,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Colby Cooley">
-<meta name="dcterms.date" content="2025-09-22">
-<meta name="description" content="Analysis of San Francisco rent data of rentals from TidyTuesday">
+<meta name="dcterms.date" content="2025-11-09">
+<meta name="description" content="Analysis on the ethics of New York City taxi data">
 
-<title>San Francisco Rents – Colby Cooley</title>
+<title>NYC Taxi – Colby Cooley</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -22,40 +22,6 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
-}
-/* CSS for syntax highlighting */
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -188,25 +154,37 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#sources" id="toc-sources" class="nav-link active" data-scroll-target="#sources">Sources</a></li>
+  <li><a href="#intro" id="toc-intro" class="nav-link" data-scroll-target="#intro">Intro</a></li>
+  <li><a href="#what-is-the-permission-structure-for-using-the-data-was-it-followed" id="toc-what-is-the-permission-structure-for-using-the-data-was-it-followed" class="nav-link" data-scroll-target="#what-is-the-permission-structure-for-using-the-data-was-it-followed">What is the permission structure for using the data? Was it followed?</a></li>
+  <li><a href="#is-the-data-identifiable-in-what-way-is-the-data-sufficiently-anonymized-or-old-to-be-free-of-ethical-concerns-is-anonymity-guaranteed" id="toc-is-the-data-identifiable-in-what-way-is-the-data-sufficiently-anonymized-or-old-to-be-free-of-ethical-concerns-is-anonymity-guaranteed" class="nav-link" data-scroll-target="#is-the-data-identifiable-in-what-way-is-the-data-sufficiently-anonymized-or-old-to-be-free-of-ethical-concerns-is-anonymity-guaranteed">Is the data identifiable? In what way? Is the data sufficiently anonymized or old to be free of ethical concerns? Is anonymity guaranteed?</a></li>
+  <li><a href="#was-the-data-made-publicly-available-why-how-on-what-platform" id="toc-was-the-data-made-publicly-available-why-how-on-what-platform" class="nav-link" data-scroll-target="#was-the-data-made-publicly-available-why-how-on-what-platform">Was the data made publicly available? Why? How? On what platform?</a></li>
+  <li><a href="#what-was-the-consent-structure-for-recruiting-participants-was-informed-consent-possible-can-you-provide-informed-consent-for-applications-that-are-yet-foreseen-is-the-data-being-used-in-unintended-ways-to-the-original-study" id="toc-what-was-the-consent-structure-for-recruiting-participants-was-informed-consent-possible-can-you-provide-informed-consent-for-applications-that-are-yet-foreseen-is-the-data-being-used-in-unintended-ways-to-the-original-study" class="nav-link" data-scroll-target="#what-was-the-consent-structure-for-recruiting-participants-was-informed-consent-possible-can-you-provide-informed-consent-for-applications-that-are-yet-foreseen-is-the-data-being-used-in-unintended-ways-to-the-original-study">What was the consent structure for recruiting participants? Was informed consent possible? Can you provide informed consent for applications that are yet foreseen? Is the data being used in unintended ways to the original study?</a></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
-<main class="content column-page" id="quarto-document-content">
+<main class="content column-page-left" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">San Francisco Rents</h1>
+<h1 class="title">NYC Taxi</h1>
 </div>
 
 <div>
   <div class="description">
-    <p>Analysis of San Francisco rent data of rentals from TidyTuesday</p>
+    <p>Analysis on the ethics of New York City taxi data</p>
   </div>
 </div>
 
 
-<div class="quarto-title-meta column-page">
+<div class="quarto-title-meta column-page-left">
 
     <div>
     <div class="quarto-title-meta-heading">Author</div>
@@ -218,7 +196,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">September 22, 2025</p>
+      <p class="date">November 9, 2025</p>
     </div>
   </div>
   
@@ -230,31 +208,38 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>Original Source: Pennington, Kate (2018). Bay Area Craigslist Rental Housing Posts, 2000-2018. Retrieved from https://github.com/katepennington/historic_bay_area_craigslist_housing_posts/blob/master/clean_2000_2018.csv.zip.</p>
-<p>TidyTuesday Page: https://github.com/rfordatascience/tidytuesday/tree/main/data/2022/2022-07-05</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>tuesdata <span class="ot">&lt;-</span> tidytuesdayR<span class="sc">::</span><span class="fu">tt_load</span>(<span class="st">'2022-07-05'</span>)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>rent <span class="ot">&lt;-</span> tuesdata<span class="sc">$</span>rent</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(rent, <span class="fu">aes</span>(<span class="at">x =</span> price)) <span class="sc">+</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="st">"county"</span>) <span class="sc">+</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Prices of Rentals in Different San Francisco Counties"</span>, <span class="at">x =</span> <span class="st">"Price(USD)"</span>) <span class="sc">+</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="sf_rents_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
+<section id="sources" class="level3">
+<h3 class="anchored" data-anchor-id="sources">Sources</h3>
+<p>Goodin, Dan. “Poorly Anonymized Logs Reveal NYC Cab Drivers’ Detailed Whereabouts.” <em>Ars Technica</em>, 27 June 2014. <a href="https://arstechnica.com/information-technology/2014/06/poorly-anonymized-logs-reveal-nyc-cab-drivers-detailed-whereabouts/" class="uri">https://arstechnica.com/information-technology/2014/06/poorly-anonymized-logs-reveal-nyc-cab-drivers-detailed-whereabouts/</a>.</p>
+<p>Tockar, Anthony. <em>“Riding with the Stars: Passenger Privacy in the NYC Taxicab Dataset.”</em> Vet Scholar Journal Club, Kansas State University, 2024. PDF file. <a href="https://www.vet.k-state.edu/research/student-opportunities/vet-scholar/calendar/pdf/2024-journal-club-docs/session-1/Riding%20with%20the%20Stars_%20Passenger%20Privacy%20in%20the%20NYC%20Taxicab%20Dataset.pdf" class="uri">https://www.vet.k-state.edu/research/student-opportunities/vet-scholar/calendar/pdf/2024-journal-club-docs/session-1/Riding%20with%20the%20Stars_%20Passenger%20Privacy%20in%20the%20NYC%20Taxicab%20Dataset.pdf</a></p>
+</section>
+<section id="intro" class="level3">
+<h3 class="anchored" data-anchor-id="intro">Intro</h3>
+<p>In 2014, as part of an open-data initiative to support transparency, entrepreneurship, and urban planning, New York City’s Taxi and Limousine Commission(TLC) publicly released data on 173 million taxi rides. The dataset included pick-up and drop-off times, locations, fares, and anonymized driver medallion numbers. Soon after, however, researchers and journalists discovered that the data could be easily de-anonymized to reveal the identities and movements of drivers and even passengers(Goodin; Tockar). The release raised deep questions about what counts as anonymized data, who decides to share it, and who bears the consequences when it’s misused.</p>
+<p>The dataset was released as a structured CSV with variables to record medallion number(hashed), trip start/end timestamps, GPS coordinates, fares, and tips. But, as it turned out, the hashing used to anonymize medallion numbers was weak and could be reversed with a simple MD5 hash lookup(Goodin). Data scientists and journalists were able to re-identify by cross-referencing ride timestamps and locations with Instagram posts, paparazzi photos, and celebrity schedules(Tockar). This technique is a classic data science method used to connect separate datasets based on overlapping attributes. The case thus shows how the same analytical tools that can produce insights can also compromise privacy.</p>
+</section>
+<section id="what-is-the-permission-structure-for-using-the-data-was-it-followed" class="level3">
+<h3 class="anchored" data-anchor-id="what-is-the-permission-structure-for-using-the-data-was-it-followed">What is the permission structure for using the data? Was it followed?</h3>
+<p>The data came from drivers and passengers and was collected under regulatory requirements for fare reporting. It was not intended for public research. Neither group was asked for consent to release detailed trip-level information(Goodin; Tockar). The NYC TLC justified release under an open data initiative, but this was institutional consent, not individual consent. It raises the question of if institutions can consent on behalf of individuals.</p>
+</section>
+<section id="is-the-data-identifiable-in-what-way-is-the-data-sufficiently-anonymized-or-old-to-be-free-of-ethical-concerns-is-anonymity-guaranteed" class="level3">
+<h3 class="anchored" data-anchor-id="is-the-data-identifiable-in-what-way-is-the-data-sufficiently-anonymized-or-old-to-be-free-of-ethical-concerns-is-anonymity-guaranteed">Is the data identifiable? In what way? Is the data sufficiently anonymized or old to be free of ethical concerns? Is anonymity guaranteed?</h3>
+<p>The TLC claimed that removing names and hashing medallions ensured privacy, however, the MD5 hashes were reversible and pickup/drop-off times plus coordinates uniquely identified specific trips(Goodin). Anthony Tockar showed that a handful of coordinates could reveal celebrity movements, such as when Bradley Cooper and Jessica Alba took cabs(Tockar). The case demonstrates that anonymization is fragile when datasets are detailed but patchy. Even when they don’t have names, identity can be inferred. This links to a broader principle, the mosaic effect, which is when many harmless pieces of data combine to form identifiable pictures(Tockar).</p>
+</section>
+<section id="was-the-data-made-publicly-available-why-how-on-what-platform" class="level3">
+<h3 class="anchored" data-anchor-id="was-the-data-made-publicly-available-why-how-on-what-platform">Was the data made publicly available? Why? How? On what platform?</h3>
+<p>The dataset was released on NYC’s Open Data portal for transparency and research innovation, which could potentially benefit entrepreneurs, journalists, or app developers(Goodin; Tockar). But the drivers and passengers, on the other hand, bore the privacy risk without reaping any of those benefits. This reflects a power imbalance where city officials and data scientists control data circulation. Individuals become data points in systems without being able to opt out. For example, drivers’ income and working patterns could be reconstructed, thereby invading financial privacy(Tockar).</p>
+</section>
+<section id="what-was-the-consent-structure-for-recruiting-participants-was-informed-consent-possible-can-you-provide-informed-consent-for-applications-that-are-yet-foreseen-is-the-data-being-used-in-unintended-ways-to-the-original-study" class="level3">
+<h3 class="anchored" data-anchor-id="what-was-the-consent-structure-for-recruiting-participants-was-informed-consent-possible-can-you-provide-informed-consent-for-applications-that-are-yet-foreseen-is-the-data-being-used-in-unintended-ways-to-the-original-study">What was the consent structure for recruiting participants? Was informed consent possible? Can you provide informed consent for applications that are yet foreseen? Is the data being used in unintended ways to the original study?</h3>
+<p>The data were originally collected for regulatory compliance, not for open public distribution(Goodin; Tockar). No one foresaw the ways the dataset could be combined with other sources for re-identification or surveillance(Tockar). It raises the issue of whether or not we can we give informed consent for uses that haven’t been invented yet. It also demonstrates the need to anticipate future analytical capabilities(Tockar).</p>
+</section>
+<section id="conclusion" class="level3">
+<h3 class="anchored" data-anchor-id="conclusion">Conclusion</h3>
+<p>The NYC Taxi dataset illustrates how data science, even with good intentions such as open data or innovation, can reproduce structural power imbalances and harm those with least control over data circulation(Goodin; Tockar). Drivers lost privacy and were economically exposed, while passengers could now be tracked(Tockar). Meanwhile, data scientists and tech companies profited from free data(Goodin). The ethical violations occurred largely in the service of efficiency, transparency, and potential profit, not necessarily out of malice. This shows how claims of public benefit can obscure real harms(Tockar). The work was done by city data scientists, not affected individuals(Goodin). Researchers, startups, and journalists benefited. Taxi drivers and ordinary riders were harmed or neglected(Tockar).</p>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

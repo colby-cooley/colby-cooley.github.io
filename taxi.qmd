@@ -1,0 +1,43 @@
+---
+title: "NYC Taxi"
+description: |
+  Analysis on the ethics of New York City taxi data
+author: Colby Cooley
+date: November 9, 2025
+format: html
+execute: 
+  warning: false
+  message: false
+---
+
+### Sources
+
+Goodin, Dan. “Poorly Anonymized Logs Reveal NYC Cab Drivers’ Detailed Whereabouts.” *Ars Technica*, 27 June 2014. <https://arstechnica.com/information-technology/2014/06/poorly-anonymized-logs-reveal-nyc-cab-drivers-detailed-whereabouts/>.
+
+Tockar, Anthony. *“Riding with the Stars: Passenger Privacy in the NYC Taxicab Dataset.”* Vet Scholar Journal Club, Kansas State University, 2024. PDF file. <https://www.vet.k-state.edu/research/student-opportunities/vet-scholar/calendar/pdf/2024-journal-club-docs/session-1/Riding%20with%20the%20Stars_%20Passenger%20Privacy%20in%20the%20NYC%20Taxicab%20Dataset.pdf>
+
+### Intro
+
+In 2014, as part of an open-data initiative to support transparency, entrepreneurship, and urban planning, New York City's Taxi and Limousine Commission(TLC) publicly released data on 173 million taxi rides. The dataset included pick-up and drop-off times, locations, fares, and anonymized driver medallion numbers. Soon after, however, researchers and journalists discovered that the data could be easily de-anonymized to reveal the identities and movements of drivers and even passengers(Goodin; Tockar). The release raised deep questions about what counts as anonymized data, who decides to share it, and who bears the consequences when it’s misused.
+
+The dataset was released as a structured CSV with variables to record medallion number(hashed), trip start/end timestamps, GPS coordinates, fares, and tips. But, as it turned out, the hashing used to anonymize medallion numbers was weak and could be reversed with a simple MD5 hash lookup(Goodin). Data scientists and journalists were able to re-identify by cross-referencing ride timestamps and locations with Instagram posts, paparazzi photos, and celebrity schedules(Tockar). This technique is a classic data science method used to connect separate datasets based on overlapping attributes. The case thus shows how the same analytical tools that can produce insights can also compromise privacy.
+
+### What is the permission structure for using the data? Was it followed?
+
+The data came from drivers and passengers and was collected under regulatory requirements for fare reporting. It was not intended for public research. Neither group was asked for consent to release detailed trip-level information(Goodin; Tockar). The NYC TLC justified release under an open data initiative, but this was institutional consent, not individual consent. It raises the question of if institutions can consent on behalf of individuals.
+
+### Is the data identifiable? In what way? Is the data sufficiently anonymized or old to be free of ethical concerns? Is anonymity guaranteed?
+
+The TLC claimed that removing names and hashing medallions ensured privacy, however, the MD5 hashes were reversible and pickup/drop-off times plus coordinates uniquely identified specific trips(Goodin). Anthony Tockar showed that a handful of coordinates could reveal celebrity movements, such as when Bradley Cooper and Jessica Alba took cabs(Tockar). The case demonstrates that anonymization is fragile when datasets are detailed but patchy. Even when they don't have names, identity can be inferred. This links to a broader principle, the mosaic effect, which is when many harmless pieces of data combine to form identifiable pictures(Tockar).
+
+### Was the data made publicly available? Why? How? On what platform?
+
+The dataset was released on NYC’s Open Data portal for transparency and research innovation, which could potentially benefit entrepreneurs, journalists, or app developers(Goodin; Tockar). But the drivers and passengers, on the other hand, bore the privacy risk without reaping any of those benefits. This reflects a power imbalance where city officials and data scientists control data circulation. Individuals become data points in systems without being able to opt out. For example, drivers’ income and working patterns could be reconstructed, thereby invading financial privacy(Tockar).
+
+### What was the consent structure for recruiting participants? Was informed consent possible? Can you provide informed consent for applications that are yet foreseen? Is the data being used in unintended ways to the original study?
+
+The data were originally collected for regulatory compliance, not for open public distribution(Goodin; Tockar). No one foresaw the ways the dataset could be combined with other sources for re-identification or surveillance(Tockar). It raises the issue of whether or not we can we give informed consent for uses that haven’t been invented yet. It also demonstrates the need to anticipate future analytical capabilities(Tockar).
+
+### Conclusion
+
+The NYC Taxi dataset illustrates how data science, even with good intentions such as open data or innovation, can reproduce structural power imbalances and harm those with least control over data circulation(Goodin; Tockar). Drivers lost privacy and were economically exposed, while passengers could now be tracked(Tockar). Meanwhile, data scientists and tech companies profited from free data(Goodin). The ethical violations occurred largely in the service of efficiency, transparency, and potential profit, not necessarily out of malice. This shows how claims of public benefit can obscure real harms(Tockar). The work was done by city data scientists, not affected individuals(Goodin). Researchers, startups, and journalists benefited. Taxi drivers and ordinary riders were harmed or neglected(Tockar).
