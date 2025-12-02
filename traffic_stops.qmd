@@ -1,0 +1,76 @@
+---
+title: "Traffic Stops"
+description: |
+  Analysis of traffic stops in various U.S. locations
+author: Colby Cooley
+date: December 1, 2025
+format: html
+execute: 
+  warning: false
+  message: false
+---
+
+Traffic stop data offer important insights into how policing practices vary across time and demographic groups. In this project, I investigate whether search behavior varies by time of day and driver race across three distinct jurisdictions in the Stanford Open Policing Project database: Arizona Statewide, Oakland (CA), and Saint Paul (MN).
+
+```{r}
+con_traffic <- DBI::dbConnect(
+
+  RMariaDB::MariaDB(),
+
+  dbname = "traffic",
+
+  host = Sys.getenv("TRAFFIC_HOST"),
+
+  user = Sys.getenv("TRAFFIC_USER"),
+
+  password = Sys.getenv("TRAFFIC_PWD")
+
+)
+```
+
+To address this question, I will attempt to combine three separate SQL tables into a unified dataset. I then try to visualize the resulting search patterns to explore whether certain racial groups experience higher search rates during specific hours of the day.
+
+The following table combines the data from all three tables into one, big table. It groups the data by the hour of the day and by the race of the driver. It also gives the number of stops, number of searches, and percentage of stops that were searches for each of these groups.
+```{sql connection=con_traffic, output.var="hourly"}
+SELECT
+  hour,
+  subject_race,
+  n_stops,
+  n_searched,
+  ROUND(100.0 * n_searched / n_stops, 2) AS pct_searched
+FROM (
+    SELECT
+      TIME_FORMAT(time, '%H') AS hour,
+      subject_race,
+      COUNT(*) AS n_stops,
+      SUM(search_conducted) AS n_searched
+    FROM (
+        SELECT time, subject_race, search_conducted
+        FROM az_statewide_2020_04_01
+
+        UNION ALL
+
+        SELECT time, subject_race, search_conducted
+        FROM ca_oakland_2020_04_01
+
+        UNION ALL
+
+        SELECT time, subject_race, search_conducted
+        FROM mn_saint_paul_2020_04_01
+    ) AS combined
+    WHERE subject_race IS NOT NULL
+      AND TIME_FORMAT(time, '%H') IS NOT NULL
+    GROUP BY hour, subject_race
+    HAVING COUNT(*) > 1000
+) AS hourly
+ORDER BY hour, subject_race
+```
+```{r}
+hourly
+```
+
+```{r}
+library(tidyverse)
+
+
+```

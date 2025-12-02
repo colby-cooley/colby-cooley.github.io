@@ -7,10 +7,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Colby Cooley">
-<meta name="dcterms.date" content="2025-09-22">
-<meta name="description" content="Analysis of San Francisco rent data of rentals from TidyTuesday">
+<meta name="dcterms.date" content="2025-12-01">
+<meta name="description" content="Analysis of traffic stops in various U.S. locations">
 
-<title>San Francisco Rents – Colby Cooley</title>
+<title>Traffic Stops – Colby Cooley</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -200,12 +200,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">San Francisco Rents</h1>
+<h1 class="title">Traffic Stops</h1>
 </div>
 
 <div>
   <div class="description">
-    <p>Analysis of San Francisco rent data of rentals from TidyTuesday</p>
+    <p>Analysis of traffic stops in various U.S. locations</p>
   </div>
 </div>
 
@@ -222,7 +222,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">September 22, 2025</p>
+      <p class="date">December 1, 2025</p>
     </div>
   </div>
   
@@ -234,28 +234,198 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>Original Source: Pennington, Kate (2018). Bay Area Craigslist Rental Housing Posts, 2000-2018. Retrieved from https://github.com/katepennington/historic_bay_area_craigslist_housing_posts/blob/master/clean_2000_2018.csv.zip.</p>
-<p>TidyTuesday Page: https://github.com/rfordatascience/tidytuesday/tree/main/data/2022/2022-07-05</p>
+<p>Traffic stop data offer important insights into how policing practices vary across time and demographic groups. In this project, I investigate whether search behavior varies by time of day and driver race across three distinct jurisdictions in the Stanford Open Policing Project database: Arizona Statewide, Oakland (CA), and Saint Paul (MN).</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>con_traffic <span class="ot">&lt;-</span> DBI<span class="sc">::</span><span class="fu">dbConnect</span>(</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  RMariaDB<span class="sc">::</span><span class="fu">MariaDB</span>(),</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">dbname =</span> <span class="st">"traffic"</span>,</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">host =</span> <span class="fu">Sys.getenv</span>(<span class="st">"TRAFFIC_HOST"</span>),</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">user =</span> <span class="fu">Sys.getenv</span>(<span class="st">"TRAFFIC_USER"</span>),</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">password =</span> <span class="fu">Sys.getenv</span>(<span class="st">"TRAFFIC_PWD"</span>)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>To address this question, I will attempt to combine three separate SQL tables into a unified dataset. I then try to visualize the resulting search patterns to explore whether certain racial groups experience higher search rates during specific hours of the day.</p>
+<p>The following table combines the data from all three tables into one, big table. It groups the data by the hour of the day and by the race of the driver. It also gives the number of stops, number of searches, and percentage of stops that were searches for each of these groups.</p>
+<div class="cell" data-output.var="hourly">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">hour</span>,</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  subject_race,</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  n_stops,</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  n_searched,</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ROUND</span>(<span class="fl">100.0</span> <span class="op">*</span> n_searched <span class="op">/</span> n_stops, <span class="dv">2</span>) <span class="kw">AS</span> pct_searched</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> (</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">SELECT</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>      TIME_FORMAT(<span class="dt">time</span>, <span class="st">'%H'</span>) <span class="kw">AS</span> <span class="kw">hour</span>,</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>      subject_race,</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>      <span class="fu">COUNT</span>(<span class="op">*</span>) <span class="kw">AS</span> n_stops,</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>      <span class="fu">SUM</span>(search_conducted) <span class="kw">AS</span> n_searched</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">FROM</span> (</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>        <span class="kw">SELECT</span> <span class="dt">time</span>, subject_race, search_conducted</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>        <span class="kw">FROM</span> az_statewide_2020_04_01</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>        <span class="kw">UNION</span> <span class="kw">ALL</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>        <span class="kw">SELECT</span> <span class="dt">time</span>, subject_race, search_conducted</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>        <span class="kw">FROM</span> ca_oakland_2020_04_01</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>        <span class="kw">UNION</span> <span class="kw">ALL</span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>        <span class="kw">SELECT</span> <span class="dt">time</span>, subject_race, search_conducted</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>        <span class="kw">FROM</span> mn_saint_paul_2020_04_01</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>    ) <span class="kw">AS</span> combined</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>    <span class="kw">WHERE</span> subject_race <span class="kw">IS</span> <span class="kw">NOT</span> <span class="kw">NULL</span></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>      <span class="kw">AND</span> TIME_FORMAT(<span class="dt">time</span>, <span class="st">'%H'</span>) <span class="kw">IS</span> <span class="kw">NOT</span> <span class="kw">NULL</span></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>    <span class="kw">GROUP</span> <span class="kw">BY</span> <span class="kw">hour</span>, subject_race</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>    <span class="kw">HAVING</span> <span class="fu">COUNT</span>(<span class="op">*</span>) <span class="op">&gt;</span> <span class="dv">1000</span></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>) <span class="kw">AS</span> hourly</span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> <span class="kw">hour</span>, subject_race</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>tuesdata <span class="ot">&lt;-</span> tidytuesdayR<span class="sc">::</span><span class="fu">tt_load</span>(<span class="st">'2022-07-05'</span>)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>rent <span class="ot">&lt;-</span> tuesdata<span class="sc">$</span>rent</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>hourly</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    hour           subject_race n_stops n_searched pct_searched
+1     00 asian/pacific islander    6385        570         8.93
+2     00                  black   27994       4821        17.22
+3     00               hispanic   16906       2715        16.06
+4     00                  other    2317        387        16.70
+5     00                  white   41049       4055         9.88
+6     01 asian/pacific islander    4250        364         8.56
+7     01                  black   19170       3481        18.16
+8     01               hispanic   14072       2628        18.68
+9     01                  other    1444        315        21.81
+10    01                  white   28649       3551        12.39
+11    02 asian/pacific islander    2571        276        10.74
+12    02                  black   13260       2701        20.37
+13    02               hispanic   11386       2818        24.75
+14    02                  other    1051        389        37.01
+15    02                  white   19285       3152        16.34
+16    03 asian/pacific islander    1719        195        11.34
+17    03                  black    7927       1684        21.24
+18    03               hispanic    7866       1635        20.79
+19    03                  white   12840       1745        13.59
+20    04 asian/pacific islander    1217         97         7.97
+21    04                  black    5032        958        19.04
+22    04               hispanic    6912       1034        14.96
+23    04                  white   11533       1133         9.82
+24    05 asian/pacific islander    1601         76         4.75
+25    05                  black    6159        741        12.03
+26    05               hispanic   16769       1590         9.48
+27    05                  other    1432        227        15.85
+28    05                  white   33432       1334         3.99
+29    06 asian/pacific islander    2758         76         2.76
+30    06                  black   10886        898         8.25
+31    06               hispanic   38226       2667         6.98
+32    06                  other    4194        352         8.39
+33    06                  white   74716       2308         3.09
+34    07 asian/pacific islander    5521        150         2.72
+35    07                  black   17555       1532         8.73
+36    07               hispanic   56336       4036         7.16
+37    07                  other    7859        468         5.95
+38    07                unknown    1357         50         3.68
+39    07                  white  124248       3529         2.84
+40    08 asian/pacific islander    7507        211         2.81
+41    08                  black   21580       1869         8.66
+42    08               hispanic   63703       4323         6.79
+43    08                  other    9617        680         7.07
+44    08                unknown    1543         63         4.08
+45    08                  white  143734       4124         2.87
+46    09 asian/pacific islander    7536        202         2.68
+47    09                  black   19891       2039        10.25
+48    09               hispanic   59863       4185         6.99
+49    09                  other    9860        773         7.84
+50    09                unknown    1380         42         3.04
+51    09                  white  133696       3973         2.97
+52    10 asian/pacific islander    7779        218         2.80
+53    10                  black   20147       2227        11.05
+54    10               hispanic   57611       3976         6.90
+55    10                  other   10284        791         7.69
+56    10                unknown    1291         40         3.10
+57    10                  white  132448       4128         3.12
+58    11 asian/pacific islander    6721        196         2.92
+59    11                  black   16963       2037        12.01
+60    11               hispanic   47224       3504         7.42
+61    11                  other    8931        779         8.72
+62    11                unknown    1102         42         3.81
+63    11                  white  113014       3605         3.19
+64    12 asian/pacific islander    6676        229         3.43
+65    12                  black   18316       2149        11.73
+66    12               hispanic   52933       3823         7.22
+67    12                  other    9751        835         8.56
+68    12                unknown    1273         54         4.24
+69    12                  white  126468       4341         3.43
+70    13 asian/pacific islander    7365        223         3.03
+71    13                  black   21147       2747        12.99
+72    13               hispanic   62155       4626         7.44
+73    13                  other   11926       1159         9.72
+74    13                unknown    1531         70         4.57
+75    13                  white  143444       4816         3.36
+76    14 asian/pacific islander    7897        236         2.99
+77    14                  black   23185       3582        15.45
+78    14               hispanic   70806       5859         8.27
+79    14                  other   12548       1289        10.27
+80    14                unknown    1608         71         4.42
+81    14                  white  156751       5690         3.63
+82    15 asian/pacific islander    7194        279         3.88
+83    15                  black   22490       4147        18.44
+84    15               hispanic   66816       6449         9.65
+85    15                  other   12741       1461        11.47
+86    15                unknown    1536         81         5.27
+87    15                  white  145329       6001         4.13
+88    16 asian/pacific islander    7582        306         4.04
+89    16                  black   24024       4463        18.58
+90    16               hispanic   63707       6231         9.78
+91    16                  other   12567       1265        10.07
+92    16                unknown    1537         50         3.25
+93    16                  white  142870       5966         4.18
+94    17 asian/pacific islander    9036        373         4.13
+95    17                  black   28181       5031        17.85
+96    17               hispanic   59820       5641         9.43
+97    17                  other   12855       1282         9.97
+98    17                unknown    1398         51         3.65
+99    17                  white  142083       6480         4.56
+100   18 asian/pacific islander    7790        393         5.04
+101   18                  black   25261       4611        18.25
+102   18               hispanic   49482       4996        10.10
+103   18                  other   10163        955         9.40
+104   18                unknown    1116         51         4.57
+105   18                  white  119589       5530         4.62
+106   19 asian/pacific islander    7051        369         5.23
+107   19                  black   23903       4271        17.87
+108   19               hispanic   41610       4078         9.80
+109   19                  other    9049        908        10.03
+110   19                  white   99311       4762         4.80
+111   20 asian/pacific islander    7355        318         4.32
+112   20                  black   24939       3836        15.38
+113   20               hispanic   44177       4327         9.79
+114   20                  other    8755        988        11.28
+115   20                unknown    1037         47         4.53
+116   20                  white  105488       5080         4.82
+117   21 asian/pacific islander    7882        329         4.17
+118   21                  black   26847       3585        13.35
+119   21               hispanic   46507       4884        10.50
+120   21                  other    8366       1040        12.43
+121   21                unknown    1092         65         5.95
+122   21                  white  108378       5614         5.18
+123   22 asian/pacific islander    7797        392         5.03
+124   22                  black   29762       4305        14.46
+125   22               hispanic   40249       4404        10.94
+126   22                  other    6240        798        12.79
+127   22                  white   91427       5469         5.98
+128   23 asian/pacific islander    8575        521         6.08
+129   23                  black   35773       5410        15.12
+130   23               hispanic   30325       3941        13.00
+131   23                  other    4029        573        14.22
+132   23                  white   70334       5283         7.51</code></pre>
+</div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(rent, <span class="fu">aes</span>(<span class="at">x =</span> price)) <span class="sc">+</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="st">"county"</span>) <span class="sc">+</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Prices of Rentals in Different San Francisco Counties"</span>, <span class="at">x =</span> <span class="st">"Price(USD)"</span>) <span class="sc">+</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="sf_rents_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 
 
