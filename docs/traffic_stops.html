@@ -250,7 +250,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>To address this question, I will attempt to combine three separate SQL tables into a unified dataset. I then try to visualize the resulting search patterns to explore whether certain racial groups experience higher search rates during specific hours of the day.</p>
+<p>To address this question, I will attempt to combine three separate SQL tables into a unified dataset. I will then try to visualize the resulting search patterns to explore whether certain racial groups experience higher search rates during specific hours of the day.</p>
 <p>The following table combines the data from all three tables into one, big table. It groups the data by the hour of the day and by the race of the driver. It also gives the number of stops, number of searches, and percentage of stops that were searches for each of these groups.</p>
 <div class="cell" data-output.var="hourly">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span></span>
@@ -261,7 +261,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ROUND</span>(<span class="fl">100.0</span> <span class="op">*</span> n_searched <span class="op">/</span> n_stops, <span class="dv">2</span>) <span class="kw">AS</span> pct_searched</span>
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> (</span>
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">SELECT</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>      TIME_FORMAT(<span class="dt">time</span>, <span class="st">'%H'</span>) <span class="kw">AS</span> <span class="kw">hour</span>,</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>      <span class="fu">CONVERT</span>(TIME_FORMAT(<span class="dt">time</span>, <span class="st">'%H'</span>), UNSIGNED) <span class="kw">AS</span> <span class="kw">hour</span>,</span>
 <span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>      subject_race,</span>
 <span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>      <span class="fu">COUNT</span>(<span class="op">*</span>) <span class="kw">AS</span> n_stops,</span>
 <span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>      <span class="fu">SUM</span>(search_conducted) <span class="kw">AS</span> n_searched</span>
@@ -290,57 +290,57 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>hourly</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>    hour           subject_race n_stops n_searched pct_searched
-1     00 asian/pacific islander    6385        570         8.93
-2     00                  black   27994       4821        17.22
-3     00               hispanic   16906       2715        16.06
-4     00                  other    2317        387        16.70
-5     00                  white   41049       4055         9.88
-6     01 asian/pacific islander    4250        364         8.56
-7     01                  black   19170       3481        18.16
-8     01               hispanic   14072       2628        18.68
-9     01                  other    1444        315        21.81
-10    01                  white   28649       3551        12.39
-11    02 asian/pacific islander    2571        276        10.74
-12    02                  black   13260       2701        20.37
-13    02               hispanic   11386       2818        24.75
-14    02                  other    1051        389        37.01
-15    02                  white   19285       3152        16.34
-16    03 asian/pacific islander    1719        195        11.34
-17    03                  black    7927       1684        21.24
-18    03               hispanic    7866       1635        20.79
-19    03                  white   12840       1745        13.59
-20    04 asian/pacific islander    1217         97         7.97
-21    04                  black    5032        958        19.04
-22    04               hispanic    6912       1034        14.96
-23    04                  white   11533       1133         9.82
-24    05 asian/pacific islander    1601         76         4.75
-25    05                  black    6159        741        12.03
-26    05               hispanic   16769       1590         9.48
-27    05                  other    1432        227        15.85
-28    05                  white   33432       1334         3.99
-29    06 asian/pacific islander    2758         76         2.76
-30    06                  black   10886        898         8.25
-31    06               hispanic   38226       2667         6.98
-32    06                  other    4194        352         8.39
-33    06                  white   74716       2308         3.09
-34    07 asian/pacific islander    5521        150         2.72
-35    07                  black   17555       1532         8.73
-36    07               hispanic   56336       4036         7.16
-37    07                  other    7859        468         5.95
-38    07                unknown    1357         50         3.68
-39    07                  white  124248       3529         2.84
-40    08 asian/pacific islander    7507        211         2.81
-41    08                  black   21580       1869         8.66
-42    08               hispanic   63703       4323         6.79
-43    08                  other    9617        680         7.07
-44    08                unknown    1543         63         4.08
-45    08                  white  143734       4124         2.87
-46    09 asian/pacific islander    7536        202         2.68
-47    09                  black   19891       2039        10.25
-48    09               hispanic   59863       4185         6.99
-49    09                  other    9860        773         7.84
-50    09                unknown    1380         42         3.04
-51    09                  white  133696       3973         2.97
+1      0 asian/pacific islander    6385        570         8.93
+2      0                  black   27994       4821        17.22
+3      0               hispanic   16906       2715        16.06
+4      0                  other    2317        387        16.70
+5      0                  white   41049       4055         9.88
+6      1 asian/pacific islander    4250        364         8.56
+7      1                  black   19170       3481        18.16
+8      1               hispanic   14072       2628        18.68
+9      1                  other    1444        315        21.81
+10     1                  white   28649       3551        12.39
+11     2 asian/pacific islander    2571        276        10.74
+12     2                  black   13260       2701        20.37
+13     2               hispanic   11386       2818        24.75
+14     2                  other    1051        389        37.01
+15     2                  white   19285       3152        16.34
+16     3 asian/pacific islander    1719        195        11.34
+17     3                  black    7927       1684        21.24
+18     3               hispanic    7866       1635        20.79
+19     3                  white   12840       1745        13.59
+20     4 asian/pacific islander    1217         97         7.97
+21     4                  black    5032        958        19.04
+22     4               hispanic    6912       1034        14.96
+23     4                  white   11533       1133         9.82
+24     5 asian/pacific islander    1601         76         4.75
+25     5                  black    6159        741        12.03
+26     5               hispanic   16769       1590         9.48
+27     5                  other    1432        227        15.85
+28     5                  white   33432       1334         3.99
+29     6 asian/pacific islander    2758         76         2.76
+30     6                  black   10886        898         8.25
+31     6               hispanic   38226       2667         6.98
+32     6                  other    4194        352         8.39
+33     6                  white   74716       2308         3.09
+34     7 asian/pacific islander    5521        150         2.72
+35     7                  black   17555       1532         8.73
+36     7               hispanic   56336       4036         7.16
+37     7                  other    7859        468         5.95
+38     7                unknown    1357         50         3.68
+39     7                  white  124248       3529         2.84
+40     8 asian/pacific islander    7507        211         2.81
+41     8                  black   21580       1869         8.66
+42     8               hispanic   63703       4323         6.79
+43     8                  other    9617        680         7.07
+44     8                unknown    1543         63         4.08
+45     8                  white  143734       4124         2.87
+46     9 asian/pacific islander    7536        202         2.68
+47     9                  black   19891       2039        10.25
+48     9               hispanic   59863       4185         6.99
+49     9                  other    9860        773         7.84
+50     9                unknown    1380         42         3.04
+51     9                  white  133696       3973         2.97
 52    10 asian/pacific islander    7779        218         2.80
 53    10                  black   20147       2227        11.05
 54    10               hispanic   57611       3976         6.90
@@ -424,9 +424,51 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 132   23                  white   70334       5283         7.51</code></pre>
 </div>
 </div>
+<p>The following plot shows clear differences in stop frequency across hours of the day. Traffic stops increase substantially during daylight hours and decline late at night. Racial groups follow broadly similar patterns, though some groups appear to have disproportionately more stops during certain hours.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(hourly, <span class="fu">aes</span>(<span class="at">x =</span> hour, <span class="at">y =</span> n_stops, <span class="at">color =</span> subject_race)) <span class="sc">+</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="fu">geom_line</span>(<span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="fu">labs</span>(</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="at">title =</span> <span class="st">"Number of Traffic Stops by Hour and Race"</span>,</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="at">x =</span> <span class="st">"Hour of Day (0–23)"</span>,</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="at">y =</span> <span class="st">"Number of Stops"</span>,</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="at">color =</span> <span class="st">"Driver Race"</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>) <span class="sc">+</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="traffic_stops_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
 </div>
+</div>
+</div>
+<p>The following figure illustrates how search likelihood varies across the day and across racial groups. Certain groups show consistently higher search rates than others, even during hours where the number of stops is low.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(hourly, <span class="fu">aes</span>(<span class="at">x =</span> hour, <span class="at">y =</span> pct_searched, <span class="at">color =</span> subject_race)) <span class="sc">+</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">geom_line</span>(<span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="fu">labs</span>(</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="at">title =</span> <span class="st">"Search Rate by Hour and Driver Race"</span>,</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="at">x =</span> <span class="st">"Hour of Day (0–23)"</span>,</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="at">y =</span> <span class="st">"Percent of Stops That Resulted in a Search"</span>,</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="at">color =</span> <span class="st">"Driver Race"</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>) <span class="sc">+</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="traffic_stops_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>This analysis reveals that both stop frequency and search rates vary substantially across time of day and across racial groups. Stops are most common in daytime and early evening hours, but search rates do not always follow this pattern. Instead, some racial groups experience higher search rates consistently throughout the day.</p>
+<p>References: - Pierson, E., Simoiu, C., Overgoor, J., Corbett-Davies, S., Ramachandran, V., Phillips, C., Shroff, R., &amp; Goel, S. (2020). <strong>A large-scale analysis of racial disparities in police stops across the United States.</strong> <em>Nature Human Behaviour.</em> <a href="https://www.nature.com/articles/s41562-020-0858-1">https://www.nature.com/articles/s41562-020-0858-1</a></p>
+<ul>
+<li>Stanford Open Policing Project. (n.d.). <strong>Data portal.</strong> <a href="https://openpolicing.stanford.edu/data/">https://openpolicing.stanford.edu/data/</a></li>
+</ul>
 
 
 
