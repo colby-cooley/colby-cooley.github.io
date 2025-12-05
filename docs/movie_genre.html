@@ -205,6 +205,17 @@ window.Quarto = {
   </li>  
     </ul>
   </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-presentations" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Presentations</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-presentations">    
+        <li>
+    <a class="dropdown-item" href="./presentation.html">
+ <span class="dropdown-text">Do Movie Genres Differ in Their IMDb Ratings?</span></a>
+  </li>  
+    </ul>
+  </li>
 </ul>
           </div> <!-- /navcollapse -->
             <div class="quarto-navbar-tools">
@@ -298,7 +309,8 @@ window.Quarto = {
 </section>
 <section id="visualizing-ratings-by-genre" class="level2">
 <h2 class="anchored" data-anchor-id="visualizing-ratings-by-genre">Visualizing Ratings by Genre</h2>
-<p>The following plot shows the differences in the distributions of different genre’s movie ratings based on this data. You can see how some genres have higher median ratings than others and vice versa.</p>
+<p>You can see how some genres have higher median ratings than others and vice versa.</p>
+<p>The following plot shows the differences in the distributions of different genre’s movie ratings based on this data.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(imdb, <span class="fu">aes</span>(<span class="at">x =</span> Genre2, <span class="at">y =</span> Rating, <span class="at">fill =</span> Genre2)) <span class="sc">+</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
@@ -372,7 +384,7 @@ T = \sum_i n_i (\bar{x}_i - \bar{x})^2
 </section>
 <section id="null-distribution-vs-observed-statistic" class="level2">
 <h2 class="anchored" data-anchor-id="null-distribution-vs-observed-statistic">Null Distribution vs Observed Statistic</h2>
-<p>The following plot shows the distribution of the one-thousand simulated/permuted values as well as a vertical line at the observed statistic.</p>
+<p>The following plot shows the distribution of the one thousand simulated/permuted values as well as a vertical line at the observed statistic.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(null_df, <span class="fu">aes</span>(<span class="at">x =</span> stat)) <span class="sc">+</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="dv">1</span>, <span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">+</span></span>

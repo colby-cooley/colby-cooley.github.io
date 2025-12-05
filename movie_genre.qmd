@@ -37,7 +37,9 @@ imdb <- read_csv(
 
 ## Visualizing Ratings by Genre
 
-The following plot shows the differences in the distributions of different genre's movie ratings based on this data. You can see how some genres have higher median ratings than others and vice versa.
+You can see how some genres have higher median ratings than others and vice versa.
+
+The following plot shows the differences in the distributions of different genre's movie ratings based on this data.
 
 ```{r}
 #| fig-alt: "Boxplots of IMDb ratings for each primary genre (Genre2). Shows median, IQR, and outliers."
@@ -102,7 +104,7 @@ null_df <- data.frame(stat = null_stats)
 
 ## Null Distribution vs Observed Statistic
 
-The following plot shows the distribution of the one-thousand simulated/permuted values as well as a vertical line at the observed statistic.
+The following plot shows the distribution of the one thousand simulated/permuted values as well as a vertical line at the observed statistic.
 
 ```{r}
 #| fig-alt: "Histogram of permuted test statistics with a dashed vertical line showing the observed statistic."

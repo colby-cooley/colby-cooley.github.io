@@ -20,6 +20,9 @@ website:
       - text: "Ethics"
         menu:
           - taxi.qmd
+      - text: "Presentations"
+        menu: 
+          - presentation.qmd
 
 format:
   html:

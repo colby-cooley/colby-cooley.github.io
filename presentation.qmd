@@ -1,0 +1,122 @@
+---
+title: "Do Movie Genres Differ in Their IMDb Ratings?"
+subtitle: "A Permutation-Based ANOVA Approach"
+author: "Colby Cooley"
+date: "December 2025"
+format:
+  revealjs:
+    scrollable: true
+    slide-number: true
+    show-slide-number: all
+    embed-resources: true
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+## Introduction
+- Is there an association between a movie's genre and its IMDb rating?
+- We can statistically test this by examining a dataset of some movies and their ratings
+- We will try to see if the observed differences in the ratings across genres of a sample are likely to occur by chance
+- A permutation test is perfect for this because it will simply test whether the association between genre and rating is stronger than we would expect if genres had no effect
+
+## Import and Wrangle Data
+The following dataset contains information on the genre and rating of 10,000 different movies in the IMDb database:
+```{r}
+library(tidyverse)
+
+# Read data
+imdb <- read_csv(
+  "data/imdb-movies-dataset.csv"
+) |>
+  
+  # Extract a primary genre to reduce sparsity
+  mutate(Genre2 = str_extract(Genre, "^[A-z-]+")) |>
+  
+  # Keep only the variables needed for this analysis
+  select(Title, Genre2, Rating)
+```
+
+## Visualizing Ratings by Genre
+The following plot shows the differences in the distributions of different genre's movie ratings based on this data:
+```{r}
+#| fig-alt: "Boxplots of IMDb ratings for each primary genre (Genre2). Shows median, IQR, and outliers."
+#| fig-cap: "Rating distributions by primary genre (boxplots). Each facet displays the distribution of IMDb ratings for the listed genre."
+
+ggplot(imdb, aes(x = Genre2, y = Rating, fill = Genre2)) +
+  geom_boxplot() +
+  labs(title = "Rating Distribution of Movies in Different Genres", x = "Genre", fill = "Genre") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+## Hypotheses
+H₀ (null): The model that generates movie ratings is the same for all genres (genre has no effect). Any observed differences across genres are due to chance.
+
+Hₐ (alternative): The model that generates ratings differs by genre; therefore, some genres have systematically different mean ratings in the population.
+
+## Test Statistic
+We use an ANOVA-style test statistic that weights squared deviations of each genre mean from the overall mean by genre sample size:
+$$
+T = \sum_i n_i (\bar{x}_i - \bar{x})^2
+$$
+where $n_i$ is the number of movies in genre $i$, $\bar{x}_i$ the genre mean, and $\bar{x}$ the overall mean.
+```{r}
+imdb |> summarize(avg_rating = mean(Rating, na.rm = TRUE))
+mean_rating <- 6.43861
+imdb |>
+  group_by(Genre2) |>
+  summarize(ni = n(), xi = mean(Rating, na.rm = TRUE)) |>
+  summarize(stat = sum(ni * (xi - mean_rating)^2, na.rm = TRUE))
+obs_stat <- 1085.533
+```
+
+## Permutation Test
+Now we need a function that can simulate/permute this calculation while assuming genres are randomly assigned to movies(the null hypothesis(Ho)).
+```{r}
+imdb_sim <- function(x) {
+  sim_value <- imdb |>
+    mutate(Genre2 = sample(Genre2, n(), replace = FALSE)) |>
+    group_by(Genre2) |>
+    summarize(ni = n(), xi = mean(Rating, na.rm = TRUE)) |>
+    summarize(stat = sum(ni * (xi - mean_rating)^2, na.rm = TRUE)) |>
+    pull(stat)
+  return(sim_value)
+}
+```
+Then we can use mapping to run this simulation/permutation many times so that we can be more confident in the results.
+```{r}
+set.seed(47)
+null_stats <- map_dbl(c(1:1000), ~imdb_sim(.x))
+
+null_df <- data.frame(stat = null_stats)
+```
+
+## Null Distribution vs Observed Statistic
+The following plot shows the distribution of the one-thousand simulated/permuted values as well as a vertical line at the observed statistic:
+```{r}
+#| fig-alt: "Histogram of permuted test statistics with a dashed vertical line showing the observed statistic."
+#| fig-cap: "Null distribution of the permuted test statistic (1000 permutations). The red line shows the observed statistic from the real data."
+#| fig-width: 8
+#| fig-height: 5
+
+ggplot(null_df, aes(x = stat)) +
+  geom_histogram(binwidth = 1, color = "black") +
+  geom_vline(xintercept = obs_stat, color = "red") +
+  annotate("text", x = obs_stat, y = 50, label = "Observed Statistic", 
+           color = "red", angle = 90, vjust = -0.5, hjust = 1) +
+  labs(
+    title = "Null Distribution of Permuted Statistics",
+    x = "Simulated Statistic",
+    y = "Frequency"
+  ) +
+  theme_minimal()
+```
+
+## Conclusion
+- None of the thousand permuted statistics came close to being at least as extreme as the observed statistic, meaning the p-value for this test is 0
+- We have very strong evidence supporting the alternative hypthesis(Ha)
+- This conclusion is about the population model (i.e., whether genre is associated with ratings in general)
+
+## References
+Barthwal, Aman. *IMDb Movies Data*. Kaggle, 2024.  
+[https://www.kaggle.com/datasets/amanbarthwal/imdb-movies-data](https://www.kaggle.com/datasets/amanbarthwal/imdb-movies-data)
