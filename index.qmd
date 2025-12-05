@@ -11,4 +11,4 @@ about:
       href: https://github.com/colby-cooley/colby-cooley.github.io
 ---
 
-Hi there! I'm Colby. I am a student at Pomona College and I'm interested in studying data science, economics, and math. I also play for the Pomona-Pitzer football team and love hanging out with friends in my spare time. Poke around my website to learn more!
+Hi there! I'm Colby. I am a student at Pomona College, and I'm interested in studying data science, economics, and math. I also play for the Pomona-Pitzer football team and love hanging out with friends in my spare time. This website is a place for me to display a variety of different projects that I've worked on. Poke around to learn more!

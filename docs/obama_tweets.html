@@ -8,7 +8,7 @@
 
 <meta name="author" content="Colby Cooley">
 <meta name="dcterms.date" content="2025-10-06">
-<meta name="description" content="Analysis of Barack Obama’s Tweets">
+<meta name="description" content="Analysis of Barack Obama’s archived tweets, focusing on hashtags and pronoun usage.">
 
 <title>Obama Tweets – Colby Cooley</title>
 <style>
@@ -131,10 +131,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <a class="nav-link" href="./index.html"> 
 <span class="menu-text">Home</span></a>
   </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="./about.html"> 
-<span class="menu-text">About</span></a>
-  </li>  
   <li class="nav-item dropdown ">
     <a class="nav-link dropdown-toggle" href="#" id="nav-menu-data-viz" role="link" data-bs-toggle="dropdown" aria-expanded="false">
  <span class="menu-text">Data Viz</span>
@@ -142,11 +138,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <ul class="dropdown-menu" aria-labelledby="nav-menu-data-viz">    
         <li>
     <a class="dropdown-item" href="./freedom.html">
- <span class="dropdown-text">Freedom</span></a>
+ <span class="dropdown-text">Global Freedom Indicators</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="./sf_rents.html">
- <span class="dropdown-text">San Francisco Rents</span></a>
+ <span class="dropdown-text">Bay Area Rental Prices</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="./obama_tweets.html">
@@ -165,7 +161,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <ul class="dropdown-menu" aria-labelledby="nav-menu-simulations">    
         <li>
     <a class="dropdown-item" href="./movie_genre.html">
- <span class="dropdown-text">Movie Genre</span></a>
+ <span class="dropdown-text">Movie Genre and IMDb Ratings</span></a>
   </li>  
     </ul>
   </li>
@@ -192,11 +188,20 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#most-common-hashtags" id="toc-most-common-hashtags" class="nav-link" data-scroll-target="#most-common-hashtags">Most Common Hashtags</a></li>
+  <li><a href="#collective-vs.-individual-pronoun-usage" id="toc-collective-vs.-individual-pronoun-usage" class="nav-link" data-scroll-target="#collective-vs.-individual-pronoun-usage">Collective vs.&nbsp;Individual Pronoun Usage</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
-<main class="content column-page" id="quarto-document-content">
+<main class="content column-page-left" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
@@ -205,12 +210,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <div>
   <div class="description">
-    <p>Analysis of Barack Obama’s Tweets</p>
+    <p>Analysis of Barack Obama’s archived tweets, focusing on hashtags and pronoun usage.</p>
   </div>
 </div>
 
 
-<div class="quarto-title-meta column-page">
+<div class="quarto-title-meta column-page-left">
 
     <div>
     <div class="quarto-title-meta-heading">Author</div>
@@ -234,61 +239,108 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>Data from: National Archives and Records Administration. (n.d.). Obama White House social media archive: Tweets. Retrieved from Obama Federal Archives: Barack Obama Presidential Library. obamalibrary.gov</p>
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<p>This analysis uses archived tweets from Barrack Obama’s Twitter page to explore two aspects of the former president’s communication on Twitter. First, the hashtags he used most frequently, and second, his use of collective versus individual pronouns. Tweets are taken from the publicly released Obama Administration social media archive, which includes all tweets posted by <span class="citation" data-cites="POTUS">@POTUS</span> (Obama) during his presidency. The dataset provides a useful lens into how he framed political messaging.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>obama_tweets <span class="ot">&lt;-</span> </span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">read_csv</span>(<span class="fu">unz</span>(<span class="st">"data/POTUS111716.zip"</span>,</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>               <span class="st">"tweets.csv"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(text, timestamp) <span class="sc">|&gt;</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># extract hashtags</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">hashtags =</span> <span class="fu">str_extract_all</span>(text,</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>                                    <span class="st">"(?&lt;=#)</span><span class="sc">\\</span><span class="st">w+"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># clean text and remove URLs/usernames</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">text_clean =</span> <span class="fu">str_replace_all</span>(text,</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">"https?://</span><span class="sc">\\</span><span class="st">S+|@</span><span class="sc">\\</span><span class="st">w+"</span>, </span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">""</span>), </span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>         <span class="at">text_clean =</span> <span class="fu">str_to_lower</span>(text_clean)) <span class="sc">|&gt;</span> </span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  <span class="co"># count collective and individual pronouns</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">collective_count =</span> <span class="fu">str_count</span>(text_clean, </span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">"</span><span class="sc">\\</span><span class="st">b(we|us|our|ours|we're|we've)</span><span class="sc">\\</span><span class="st">b"</span>),</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>         <span class="at">individual_count =</span> <span class="fu">str_count</span>(text_clean, </span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">"</span><span class="sc">\\</span><span class="st">b(i|me|my|mine|i've|i'm)</span><span class="sc">\\</span><span class="st">b"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+</section>
+<section id="most-common-hashtags" class="level2">
+<h2 class="anchored" data-anchor-id="most-common-hashtags">Most Common Hashtags</h2>
+<p>First, we must extract and count all of his hashtags.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>obama_tweets <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">unz</span>(<span class="st">"data/POTUS111716.zip"</span>, <span class="st">"tweets.csv"</span>))</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>obama_tweets <span class="ot">&lt;-</span> obama_tweets <span class="sc">|&gt;</span> <span class="fu">select</span>(text, timestamp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>obama_hashtags <span class="ot">&lt;-</span> </span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  obama_tweets <span class="sc">|&gt;</span> </span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(hashtags) <span class="sc">|&gt;</span> </span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest</span>(hashtags) <span class="sc">|&gt;</span> </span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(hashtags) <span class="sc">|&gt;</span> </span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">count =</span> <span class="fu">n</span>()) <span class="sc">|&gt;</span> </span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(count)) <span class="sc">|&gt;</span> </span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>Then, we can visualize the data.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>obama_tweets <span class="ot">&lt;-</span> obama_tweets <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">hashtags =</span> <span class="fu">str_extract_all</span>(text, <span class="st">"(?&lt;=#)</span><span class="sc">\\</span><span class="st">w+"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(obama_hashtags, </span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> hashtags, </span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">y =</span> count, </span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">fill =</span> hashtags)) <span class="sc">+</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">show.legend =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Frequency of Obama's Top Five Most Used Twitter Hashtags"</span>, </span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Hashtag"</span>, </span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Frequency"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="obama_tweets_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" alt="Bar chart showing Barack Obama's five most frequently used hashtags on Twitter." width="672"></p>
+<figcaption>Obama’s five most frequently used hashtags.</figcaption>
+</figure>
 </div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>obama_hashtags <span class="ot">&lt;-</span> obama_tweets <span class="sc">|&gt;</span> <span class="fu">select</span>(hashtags) <span class="sc">|&gt;</span> <span class="fu">unnest</span>(hashtags) <span class="sc">|&gt;</span> <span class="fu">group_by</span>(hashtags) <span class="sc">|&gt;</span> <span class="fu">summarize</span>(<span class="at">count =</span> <span class="fu">n</span>()) <span class="sc">|&gt;</span> <span class="fu">arrange</span>(<span class="fu">desc</span>(count)) <span class="sc">|&gt;</span> <span class="fu">head</span>(<span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>The following plot shows Obama’s most used hashtags, revealing which issues he emphasized publicly. It also illustrates some of the ways that the former president used Twitter to engage with the general public.</p>
+</div>
+<p>The plot reveals which issues he emphasized publicly and illustrates some of the ways that the former president used Twitter to engage with the general public.</p>
+</section>
+<section id="collective-vs.-individual-pronoun-usage" class="level2">
+<h2 class="anchored" data-anchor-id="collective-vs.-individual-pronoun-usage">Collective vs.&nbsp;Individual Pronoun Usage</h2>
+<p>First, we must get the totals for each type of pronoun.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(obama_hashtags, <span class="fu">aes</span>(<span class="at">x =</span> hashtags, <span class="at">y =</span> count, <span class="at">fill =</span> hashtags)) <span class="sc">+</span></span>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>total_pronouns <span class="ot">&lt;-</span> obama_tweets <span class="sc">|&gt;</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">collective_total =</span> <span class="fu">sum</span>(collective_count),</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">individual_total =</span> <span class="fu">sum</span>(individual_count)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">everything</span>(), <span class="at">names_to =</span> <span class="st">"pronoun_type"</span>, <span class="at">values_to =</span> <span class="st">"total"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Then, we can visualize the data.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(total_pronouns, <span class="fu">aes</span>(<span class="at">x =</span> pronoun_type, <span class="at">y =</span> total, <span class="at">fill =</span> pronoun_type)) <span class="sc">+</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">show.legend =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Frequency of Obama's Top Five Most Used Twitter Hashtags"</span>, <span class="at">x =</span> <span class="st">"Hashtag"</span>, <span class="at">y =</span> <span class="st">"Frequency"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Total Usage of Collective vs. Individual Pronouns"</span>,</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Pronoun Type"</span>,</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Total Count"</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div>
+<div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="obama_tweets_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="obama_tweets_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" alt="Bar chart comparing Obama's usage of collective pronouns versus individual pronouns in his tweets." width="672"></p>
+<figcaption>Comparison of collective vs.&nbsp;individual pronoun usage in Obama’s tweets.</figcaption>
 </figure>
 </div>
 </div>
 </div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>obama_tweets <span class="ot">&lt;-</span> obama_tweets <span class="sc">|&gt;</span> </span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">text_clean =</span> <span class="fu">str_replace_all</span>(text, <span class="st">"https?://</span><span class="sc">\\</span><span class="st">S+|@</span><span class="sc">\\</span><span class="st">w+"</span>, <span class="st">""</span>), <span class="at">text_clean =</span> <span class="fu">str_to_lower</span>(text_clean))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>obama_tweets <span class="ot">&lt;-</span> obama_tweets <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">collective_count =</span> <span class="fu">str_count</span>(text_clean, <span class="st">"</span><span class="sc">\\</span><span class="st">b(we|us|our|ours|we're|we've)</span><span class="sc">\\</span><span class="st">b"</span>), <span class="at">individual_count =</span> <span class="fu">str_count</span>(text_clean, <span class="st">"</span><span class="sc">\\</span><span class="st">b(i|me|my|mine|i've|i'm)</span><span class="sc">\\</span><span class="st">b"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>obama_pronouns <span class="ot">&lt;-</span> obama_tweets <span class="sc">|&gt;</span> <span class="fu">pivot_longer</span>(<span class="fu">c</span>(collective_count, individual_count), <span class="at">names_to =</span> <span class="st">"pronoun_type"</span>, <span class="at">values_to =</span> <span class="st">"count"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>The following plot shows the distribution of collective pronouns(i.e.&nbsp;we/us/our) in Obama’s tweets as well as the distribution of individual pronouns(i.e.&nbsp;I/me/my) in Obama’s tweets. It gives us insight into how Obama purposefully focused his tweets on unity and shared identity rather than on himself.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(obama_pronouns, <span class="fu">aes</span>(<span class="at">x =</span> count)) <span class="sc">+</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(<span class="st">"pronoun_type"</span>, <span class="at">labeller =</span> <span class="fu">labeller</span>(<span class="at">pronoun_type =</span> <span class="fu">c</span>(<span class="at">collective_count =</span> <span class="st">"Collective"</span>,</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">individual_count =</span> <span class="st">"Individual"</span>))) <span class="sc">+</span></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_log10</span>() <span class="sc">+</span></span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Distribution of Collective vs. Individual Pronouns in Obama's Tweets (Log Scale)"</span>, <span class="at">x =</span> <span class="st">"Pronoun Count per Tweet (log scale)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="obama_tweets_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
+<p>The plot shows how Obama uses collective pronouns much more often than individual ones, and gives us insight into how Obama purposefully focused his tweets on unity and shared identity rather than on himself.</p>
+</section>
+<section id="references" class="level2">
+<h2 class="anchored" data-anchor-id="references">References</h2>
+<p>National Archives and Records Administration. (n.d.). <em>Obama White House Social Media Archive: Tweets.</em></p>
+<p>Retrieved from the Barack Obama Presidential Library:</p>
+<p><a href="https://www.obamalibrary.gov/research/obama-white-house-social-media-archive" class="uri">https://www.obamalibrary.gov/research/obama-white-house-social-media-archive</a></p>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

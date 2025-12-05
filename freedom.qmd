@@ -1,7 +1,7 @@
 ---
-title: "Freedom"
+title: "Global Freedom Indicators"
 description: |
-  Analysis of freedom data of world countries from TidyTuesday
+  Analysis of global civil liberties and political rights data from TidyTuesday
 author: Colby Cooley
 date: September 22, 2025
 format: html
@@ -10,27 +10,54 @@ execute:
   message: false
 ---
 
-Original Source: Freedom House & United Nations. (2022). Freedom Index / Freedom in the World dataset. Used in #TidyTuesday (2022-02-22). Freedom House; United Nations.
+## Introduction
 
-TidyTuesday Page: https://github.com/rfordatascience/tidytuesday/tree/main/data/2022/2022-02-22
+This analysis explores worldwide patterns in civil liberties and political rights using data from Freedom House and republished through TidyTuesday. The dataset provides annual scores on political rights and civil liberties, two important measures of democratic conditions, each on a scale from 1(most free) to 7(least free). Countries are also categorized as Free, Partly Free, or Not Free. The goal of this analysis is to visualize how these indicators relate to each other and how freedom status clusters across countries.
+
+## Load Packages and Data
 
 ```{r}
 library(tidyverse)
-```
 
-```{r}
+# Load 2022 TidyTuesday dataset
 tuesdata <- tidytuesdayR::tt_load('2022-02-22')
-
 freedom <- tuesdata$freedom
 
+# Clean Status variable for readability
 freedom <- freedom |> 
   mutate(status_full = case_when(Status == "F"  ~ "Free", Status == "PF" ~ "Partly Free", Status == "NF" ~ "Not Free", TRUE ~ Status))
 ```
 
+## Data Display
+
+Before visualizing the relationship between PR and CL, it’s helpful to see the distribution of freedom categories. This shows how many countries fall into each category in the 2022 dataset.
+
 ```{r}
+freedom |>
+  count(status_full)
+```
+
+## Visualization
+
+```{r}
+#| fig-alt: "A scatterplot showing civil liberties scores on the x-axis and political rights scores on the y-axis, with each country colored by its overall freedom classification (Free, Partly Free, Not Free)."
+#| fig-cap: "Civil liberties and political rights across world countries, colored by overall Freedom House status."
+
 ggplot(freedom, aes(x = CL, y = PR, color = status_full)) +
   geom_jitter(width = 0.2, height = 0.2, alpha = 0.7) +
   scale_color_manual(values = c("Free" = "seagreen3", "Partly Free" = "goldenrod", "Not Free" = "firebrick")) +
   labs(title = "Political Rights v.s. Civil Liberties Showing Freedom Status", x = "Civil Liberties Score(1 = most, 7 = least)", y = "Political Rights Score(1 = most, 7 = least)", color = "Status") +
   theme_minimal()
 ```
+
+## Interpretation
+
+Most countries classified as Free are clustered in the lower-left of the plot, with both low political rights and civil liberties scores(indicating greater freedom). Not Free countries cluster in the upper-right, reflecting more restrictive conditions. Partly Free countries span the middle, showing a wide range of governance environments. This pattern visually reinforces Freedom House’s classification scheme, with PR and CL scores tending to move together and align with the overall freedom rating.
+
+## References
+
+**Freedom House.** (2022). *Freedom in the World 2022 Dataset.*\
+<https://freedomhouse.org/report/freedom-world>
+
+**TidyTuesday / rfordatascience.** (2022). *TidyTuesday: Freedom in the World (2022-02-22).*\
+<https://github.com/rfordatascience/tidytuesday/tree/main/data/2022/2022-02-22>

@@ -1,7 +1,7 @@
 ---
 title: "Obama Tweets"
 description: |
-  Analysis of Barack Obama's Tweets
+  Analysis of Barack Obama’s archived tweets, focusing on hashtags and pronoun usage.
 author: Colby Cooley
 date: October 6, 2025
 format: html
@@ -10,55 +10,103 @@ execute:
   message: false
 ---
 
-Data from: National Archives and Records Administration. (n.d.). Obama White House social media archive: Tweets. Retrieved from Obama Federal Archives: Barack Obama Presidential Library. 
-obamalibrary.gov
+## Introduction
+
+This analysis uses archived tweets from Barrack Obama's Twitter page to explore two aspects of the former president’s communication on Twitter. First, the hashtags he used most frequently, and second, his use of collective versus individual pronouns. Tweets are taken from the publicly released Obama Administration social media archive, which includes all tweets posted by @POTUS (Obama) during his presidency. The dataset provides a useful lens into how he framed political messaging.
 
 ```{r}
 library(tidyverse)
+
+obama_tweets <- 
+  read_csv(unz("data/POTUS111716.zip",
+               "tweets.csv")) |>
+  select(text, timestamp) |>
+  
+  # extract hashtags
+  mutate(hashtags = str_extract_all(text,
+                                    "(?<=#)\\w+")) |>
+  
+  # clean text and remove URLs/usernames
+  mutate(text_clean = str_replace_all(text,
+                                      "https?://\\S+|@\\w+", 
+                                      ""), 
+         text_clean = str_to_lower(text_clean)) |> 
+  
+  # count collective and individual pronouns
+  mutate(collective_count = str_count(text_clean, 
+                                      "\\b(we|us|our|ours|we're|we've)\\b"),
+         individual_count = str_count(text_clean, 
+                                      "\\b(i|me|my|mine|i've|i'm)\\b"))
 ```
 
+## Most Common Hashtags
+
+First, we must extract and count all of his hashtags.
+
 ```{r}
-obama_tweets <- read_csv(unz("data/POTUS111716.zip", "tweets.csv"))
-obama_tweets <- obama_tweets |> select(text, timestamp)
+obama_hashtags <- 
+  obama_tweets |> 
+  select(hashtags) |> 
+  unnest(hashtags) |> 
+  group_by(hashtags) |> 
+  summarize(count = n()) |> 
+  arrange(desc(count)) |> 
+  head(5)
 ```
 
-```{r}
-obama_tweets <- obama_tweets |> mutate(hashtags = str_extract_all(text, "(?<=#)\\w+"))
-```
+Then, we can visualize the data.
 
 ```{r}
-obama_hashtags <- obama_tweets |> select(hashtags) |> unnest(hashtags) |> group_by(hashtags) |> summarize(count = n()) |> arrange(desc(count)) |> head(5)
-```
+#| fig-alt: "Bar chart showing Barack Obama's five most frequently used hashtags on Twitter."
+#| fig-cap: "Obama’s five most frequently used hashtags."
 
-The following plot shows Obama's most used hashtags, revealing which issues he emphasized publicly. It also illustrates some of the ways that the former president used Twitter to engage with the general public. 
-
-```{r}
-ggplot(obama_hashtags, aes(x = hashtags, y = count, fill = hashtags)) +
+ggplot(obama_hashtags, 
+       aes(x = hashtags, 
+           y = count, 
+           fill = hashtags)) +
   geom_col(show.legend = FALSE) +
-  labs(title = "Frequency of Obama's Top Five Most Used Twitter Hashtags", x = "Hashtag", y = "Frequency")
+  labs(title = "Frequency of Obama's Top Five Most Used Twitter Hashtags", 
+       x = "Hashtag", 
+       y = "Frequency")
 ```
+
+The plot reveals which issues he emphasized publicly and illustrates some of the ways that the former president used Twitter to engage with the general public.
+
+## Collective vs. Individual Pronoun Usage
+
+First, we must get the totals for each type of pronoun.
 
 ```{r}
-obama_tweets <- obama_tweets |> 
-  mutate(text_clean = str_replace_all(text, "https?://\\S+|@\\w+", ""), text_clean = str_to_lower(text_clean))
+total_pronouns <- obama_tweets |>
+  summarise(
+    collective_total = sum(collective_count),
+    individual_total = sum(individual_count)
+  ) |>
+  pivot_longer(cols = everything(), names_to = "pronoun_type", values_to = "total")
 ```
+
+Then, we can visualize the data.
 
 ```{r}
-obama_tweets <- obama_tweets |> mutate(collective_count = str_count(text_clean, "\\b(we|us|our|ours|we're|we've)\\b"), individual_count = str_count(text_clean, "\\b(i|me|my|mine|i've|i'm)\\b"))
+#| fig-alt: "Bar chart comparing Obama's usage of collective pronouns versus individual pronouns in his tweets."
+#| fig-cap: "Comparison of collective vs. individual pronoun usage in Obama’s tweets."
+
+ggplot(total_pronouns, aes(x = pronoun_type, y = total, fill = pronoun_type)) +
+  geom_col(show.legend = FALSE) +
+  labs(
+    title = "Total Usage of Collective vs. Individual Pronouns",
+    x = "Pronoun Type",
+    y = "Total Count"
+  ) +
+  theme_minimal()
 ```
 
-```{r}
-obama_pronouns <- obama_tweets |> pivot_longer(c(collective_count, individual_count), names_to = "pronoun_type", values_to = "count")
-```
+The plot shows how Obama uses collective pronouns much more often than individual ones, and gives us insight into how Obama purposefully focused his tweets on unity and shared identity rather than on himself.
 
-The following plot shows the distribution of collective pronouns(i.e. we/us/our) in Obama's tweets as well as the distribution of individual pronouns(i.e. I/me/my) in Obama's tweets. It gives us insight into how Obama purposefully focused his tweets on unity and shared identity rather than on himself.
+## References
 
-```{r}
-ggplot(obama_pronouns, aes(x = count)) +
-  facet_grid("pronoun_type", labeller = labeller(pronoun_type = c(collective_count = "Collective",
-  individual_count = "Individual"))) +
-  geom_boxplot() +
-  scale_x_log10() +
-  labs(title = "Distribution of Collective vs. Individual Pronouns in Obama's Tweets (Log Scale)", x = "Pronoun Count per Tweet (log scale)")
-```
+National Archives and Records Administration. (n.d.). *Obama White House Social Media Archive: Tweets.*
 
+Retrieved from the Barack Obama Presidential Library:
+
+<https://www.obamalibrary.gov/research/obama-white-house-social-media-archive>

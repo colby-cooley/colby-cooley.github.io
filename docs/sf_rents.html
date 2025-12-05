@@ -8,9 +8,9 @@
 
 <meta name="author" content="Colby Cooley">
 <meta name="dcterms.date" content="2025-09-22">
-<meta name="description" content="Analysis of San Francisco rent data of rentals from TidyTuesday">
+<meta name="description" content="Analysis of rental listing prices across Bay Area counties from TidyTuesday">
 
-<title>San Francisco Rents – Colby Cooley</title>
+<title>Bay Area Rental Prices – Colby Cooley</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -131,10 +131,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <a class="nav-link" href="./index.html"> 
 <span class="menu-text">Home</span></a>
   </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="./about.html"> 
-<span class="menu-text">About</span></a>
-  </li>  
   <li class="nav-item dropdown ">
     <a class="nav-link dropdown-toggle" href="#" id="nav-menu-data-viz" role="link" data-bs-toggle="dropdown" aria-expanded="false">
  <span class="menu-text">Data Viz</span>
@@ -142,11 +138,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <ul class="dropdown-menu" aria-labelledby="nav-menu-data-viz">    
         <li>
     <a class="dropdown-item" href="./freedom.html">
- <span class="dropdown-text">Freedom</span></a>
+ <span class="dropdown-text">Global Freedom Indicators</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="./sf_rents.html">
- <span class="dropdown-text">San Francisco Rents</span></a>
+ <span class="dropdown-text">Bay Area Rental Prices</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="./obama_tweets.html">
@@ -165,7 +161,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <ul class="dropdown-menu" aria-labelledby="nav-menu-simulations">    
         <li>
     <a class="dropdown-item" href="./movie_genre.html">
- <span class="dropdown-text">Movie Genre</span></a>
+ <span class="dropdown-text">Movie Genre and IMDb Ratings</span></a>
   </li>  
     </ul>
   </li>
@@ -192,25 +188,36 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#load-packages-and-data" id="toc-load-packages-and-data" class="nav-link" data-scroll-target="#load-packages-and-data">Load Packages and Data</a></li>
+  <li><a href="#data-display" id="toc-data-display" class="nav-link" data-scroll-target="#data-display">Data Display</a></li>
+  <li><a href="#visualization" id="toc-visualization" class="nav-link" data-scroll-target="#visualization">Visualization</a></li>
+  <li><a href="#interpretation" id="toc-interpretation" class="nav-link" data-scroll-target="#interpretation">Interpretation</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
-<main class="content column-page" id="quarto-document-content">
+<main class="content column-page-left" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">San Francisco Rents</h1>
+<h1 class="title">Bay Area Rental Prices</h1>
 </div>
 
 <div>
   <div class="description">
-    <p>Analysis of San Francisco rent data of rentals from TidyTuesday</p>
+    <p>Analysis of rental listing prices across Bay Area counties from TidyTuesday</p>
   </div>
 </div>
 
 
-<div class="quarto-title-meta column-page">
+<div class="quarto-title-meta column-page-left">
 
     <div>
     <div class="quarto-title-meta-heading">Author</div>
@@ -234,31 +241,91 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>Original Source: Pennington, Kate (2018). Bay Area Craigslist Rental Housing Posts, 2000-2018. Retrieved from https://github.com/katepennington/historic_bay_area_craigslist_housing_posts/blob/master/clean_2000_2018.csv.zip.</p>
-<p>TidyTuesday Page: https://github.com/rfordatascience/tidytuesday/tree/main/data/2022/2022-07-05</p>
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<p>This analysis explores rental listing prices across San Francisco Bay Area counties using publicly available Craigslist housing listings. The dataset includes rental prices, locations, and listing details over 18 years (2000–2018). The goal of this page is to provide a clear visualization of rental price distributions across counties in the Bay Area.</p>
+</section>
+<section id="load-packages-and-data" class="level2">
+<h2 class="anchored" data-anchor-id="load-packages-and-data">Load Packages and Data</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Load TidyTuesday dataset for 2022-07-05</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>tuesdata <span class="ot">&lt;-</span> tidytuesdayR<span class="sc">::</span><span class="fu">tt_load</span>(<span class="st">'2022-07-05'</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>rent <span class="ot">&lt;-</span> tuesdata<span class="sc">$</span>rent</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+</section>
+<section id="data-display" class="level2">
+<h2 class="anchored" data-anchor-id="data-display">Data Display</h2>
+<p>Before plotting, we first inspect the structure and distribution of the dataset.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>tuesdata <span class="ot">&lt;-</span> tidytuesdayR<span class="sc">::</span><span class="fu">tt_load</span>(<span class="st">'2022-07-05'</span>)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>rent <span class="ot">&lt;-</span> tuesdata<span class="sc">$</span>rent</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>rent <span class="sc">|&gt;</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(county, <span class="at">sort =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 11 × 2
+   county            n
+   &lt;chr&gt;         &lt;int&gt;
+ 1 san francisco 55730
+ 2 santa clara   41023
+ 3 alameda       25630
+ 4 san mateo     25238
+ 5 contra costa  13605
+ 6 sonoma        12422
+ 7 marin         11237
+ 8 santa cruz     8590
+ 9 solano         3742
+10 napa           2185
+11 &lt;NA&gt;           1394</code></pre>
 </div>
+</div>
+<p>This helps us understand which countries have more rental listings represented in the dataset.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(rent, <span class="fu">aes</span>(<span class="at">x =</span> price)) <span class="sc">+</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="st">"county"</span>) <span class="sc">+</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Prices of Rentals in Different San Francisco Counties"</span>, <span class="at">x =</span> <span class="st">"Price(USD)"</span>) <span class="sc">+</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>rent <span class="sc">|&gt;</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">min_price =</span> <span class="fu">min</span>(price, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">median_price =</span> <span class="fu">median</span>(price, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">max_price =</span> <span class="fu">max</span>(price, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 3
+  min_price median_price max_price
+      &lt;dbl&gt;        &lt;dbl&gt;     &lt;dbl&gt;
+1       220         1800     40000</code></pre>
+</div>
+</div>
+<p>This gives a quick overview of price ranges before visualizing county-level differences.</p>
+</section>
+<section id="visualization" class="level2">
+<h2 class="anchored" data-anchor-id="visualization">Visualization</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(rent, <span class="fu">aes</span>(<span class="at">x =</span> price)) <span class="sc">+</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="st">"county"</span>) <span class="sc">+</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Prices of Rentals in Different San Francisco Counties"</span>, <span class="at">x =</span> <span class="st">"Price(USD)"</span>) <span class="sc">+</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div>
+<div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="sf_rents_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="sf_rents_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" alt="Faceted boxplots showing rental price distributions for Bay Area counties, based on Craigslist listings from 2000 through 2018. Each facet displays the distribution of listing prices for one county." width="672"></p>
+<figcaption>Distribution of Bay Area rental prices across counties.</figcaption>
 </figure>
 </div>
 </div>
 </div>
+</section>
+<section id="interpretation" class="level2">
+<h2 class="anchored" data-anchor-id="interpretation">Interpretation</h2>
+<p>The boxplots reveal clear variation in rental prices across Bay Area counties. Counties such as San Francisco and San Mateo display substantially higher median rental prices and larger spreads. Meanwhile, counties like Solano or Contra Costa show lower and more concentrated rental prices.</p>
+</section>
+<section id="references" class="level2">
+<h2 class="anchored" data-anchor-id="references">References</h2>
+<p><strong>Pennington, K.</strong> (2018). <em>Bay Area Craigslist Rental Housing Posts, 2000–2018.</em><br>
+<a href="https://github.com/katepennington/historic_bay_area_craigslist_housing_posts/blob/master/clean_2000_2018.csv.zip" class="uri">https://github.com/katepennington/historic_bay_area_craigslist_housing_posts/blob/master/clean_2000_2018.csv.zip</a></p>
+<p><strong>TidyTuesday / rfordatascience.</strong> (2022). <em>TidyTuesday: San Francisco Rent (2022-07-05).</em><br>
+<a href="https://github.com/rfordatascience/tidytuesday/tree/main/data/2022/2022-07-05" class="uri">https://github.com/rfordatascience/tidytuesday/tree/main/data/2022/2022-07-05</a></p>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

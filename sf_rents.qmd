@@ -1,7 +1,7 @@
 ---
-title: "San Francisco Rents"
+title: "Bay Area Rental Prices"
 description: |
-  Analysis of San Francisco rent data of rentals from TidyTuesday
+  Analysis of rental listing prices across Bay Area counties from TidyTuesday
 author: Colby Cooley
 date: September 22, 2025
 format: html
@@ -10,23 +10,63 @@ execute:
   message: false
 ---
 
-Original Source: Pennington, Kate (2018). Bay Area Craigslist Rental Housing Posts, 2000-2018. Retrieved from https://github.com/katepennington/historic_bay_area_craigslist_housing_posts/blob/master/clean_2000_2018.csv.zip.
+## Introduction
 
-TidyTuesday Page: https://github.com/rfordatascience/tidytuesday/tree/main/data/2022/2022-07-05
+This analysis explores rental listing prices across San Francisco Bay Area counties using publicly available Craigslist housing listings. The dataset includes rental prices, locations, and listing details over 18 years (2000–2018). The goal of this page is to provide a clear visualization of rental price distributions across counties in the Bay Area.
+
+## Load Packages and Data
 
 ```{r}
 library(tidyverse)
-```
 
-```{r}
+# Load TidyTuesday dataset for 2022-07-05
 tuesdata <- tidytuesdayR::tt_load('2022-07-05')
 rent <- tuesdata$rent
 ```
 
+## Data Display
+
+Before plotting, we first inspect the structure and distribution of the dataset.
+
 ```{r}
+rent |>
+  count(county, sort = TRUE)
+```
+
+This helps us understand which countries have more rental listings represented in the dataset.
+
+```{r}
+rent |>
+  summarise(
+    min_price = min(price, na.rm = TRUE),
+    median_price = median(price, na.rm = TRUE),
+    max_price = max(price, na.rm = TRUE)
+  )
+```
+
+This gives a quick overview of price ranges before visualizing county-level differences.
+
+## Visualization
+
+```{r}
+#| fig-alt: "Faceted boxplots showing rental price distributions for Bay Area counties, based on Craigslist listings from 2000 through 2018. Each facet displays the distribution of listing prices for one county."
+#| fig-cap: "Distribution of Bay Area rental prices across counties."
+
 ggplot(rent, aes(x = price)) +
   geom_boxplot() +
   facet_wrap("county") +
   labs(title = "Prices of Rentals in Different San Francisco Counties", x = "Price(USD)") +
   theme_minimal()
 ```
+
+## Interpretation
+
+The boxplots reveal clear variation in rental prices across Bay Area counties. Counties such as San Francisco and San Mateo display substantially higher median rental prices and larger spreads. Meanwhile, counties like Solano or Contra Costa show lower and more concentrated rental prices.
+
+## References
+
+**Pennington, K.** (2018). *Bay Area Craigslist Rental Housing Posts, 2000–2018.*\
+<https://github.com/katepennington/historic_bay_area_craigslist_housing_posts/blob/master/clean_2000_2018.csv.zip>
+
+**TidyTuesday / rfordatascience.** (2022). *TidyTuesday: San Francisco Rent (2022-07-05).*\
+<https://github.com/rfordatascience/tidytuesday/tree/main/data/2022/2022-07-05>

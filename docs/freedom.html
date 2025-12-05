@@ -8,9 +8,9 @@
 
 <meta name="author" content="Colby Cooley">
 <meta name="dcterms.date" content="2025-09-22">
-<meta name="description" content="Analysis of freedom data of world countries from TidyTuesday">
+<meta name="description" content="Analysis of global civil liberties and political rights data from TidyTuesday">
 
-<title>Freedom – Colby Cooley</title>
+<title>Global Freedom Indicators – Colby Cooley</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -131,10 +131,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <a class="nav-link" href="./index.html"> 
 <span class="menu-text">Home</span></a>
   </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="./about.html"> 
-<span class="menu-text">About</span></a>
-  </li>  
   <li class="nav-item dropdown ">
     <a class="nav-link dropdown-toggle" href="#" id="nav-menu-data-viz" role="link" data-bs-toggle="dropdown" aria-expanded="false">
  <span class="menu-text">Data Viz</span>
@@ -142,11 +138,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <ul class="dropdown-menu" aria-labelledby="nav-menu-data-viz">    
         <li>
     <a class="dropdown-item" href="./freedom.html">
- <span class="dropdown-text">Freedom</span></a>
+ <span class="dropdown-text">Global Freedom Indicators</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="./sf_rents.html">
- <span class="dropdown-text">San Francisco Rents</span></a>
+ <span class="dropdown-text">Bay Area Rental Prices</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="./obama_tweets.html">
@@ -165,7 +161,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <ul class="dropdown-menu" aria-labelledby="nav-menu-simulations">    
         <li>
     <a class="dropdown-item" href="./movie_genre.html">
- <span class="dropdown-text">Movie Genre</span></a>
+ <span class="dropdown-text">Movie Genre and IMDb Ratings</span></a>
   </li>  
     </ul>
   </li>
@@ -192,25 +188,36 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#load-packages-and-data" id="toc-load-packages-and-data" class="nav-link" data-scroll-target="#load-packages-and-data">Load Packages and Data</a></li>
+  <li><a href="#data-display" id="toc-data-display" class="nav-link" data-scroll-target="#data-display">Data Display</a></li>
+  <li><a href="#visualization" id="toc-visualization" class="nav-link" data-scroll-target="#visualization">Visualization</a></li>
+  <li><a href="#interpretation" id="toc-interpretation" class="nav-link" data-scroll-target="#interpretation">Interpretation</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
-<main class="content column-page" id="quarto-document-content">
+<main class="content column-page-left" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Freedom</h1>
+<h1 class="title">Global Freedom Indicators</h1>
 </div>
 
 <div>
   <div class="description">
-    <p>Analysis of freedom data of world countries from TidyTuesday</p>
+    <p>Analysis of global civil liberties and political rights data from TidyTuesday</p>
   </div>
 </div>
 
 
-<div class="quarto-title-meta column-page">
+<div class="quarto-title-meta column-page-left">
 
     <div>
     <div class="quarto-title-meta-heading">Author</div>
@@ -234,35 +241,71 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>Original Source: Freedom House &amp; United Nations. (2022). Freedom Index / Freedom in the World dataset. Used in #TidyTuesday (2022-02-22). Freedom House; United Nations.</p>
-<p>TidyTuesday Page: https://github.com/rfordatascience/tidytuesday/tree/main/data/2022/2022-02-22</p>
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<p>This analysis explores worldwide patterns in civil liberties and political rights using data from Freedom House and republished through TidyTuesday. The dataset provides annual scores on political rights and civil liberties, two important measures of democratic conditions, each on a scale from 1(most free) to 7(least free). Countries are also categorized as Free, Partly Free, or Not Free. The goal of this analysis is to visualize how these indicators relate to each other and how freedom status clusters across countries.</p>
+</section>
+<section id="load-packages-and-data" class="level2">
+<h2 class="anchored" data-anchor-id="load-packages-and-data">Load Packages and Data</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Load 2022 TidyTuesday dataset</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>tuesdata <span class="ot">&lt;-</span> tidytuesdayR<span class="sc">::</span><span class="fu">tt_load</span>(<span class="st">'2022-02-22'</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>freedom <span class="ot">&lt;-</span> tuesdata<span class="sc">$</span>freedom</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Clean Status variable for readability</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>freedom <span class="ot">&lt;-</span> freedom <span class="sc">|&gt;</span> </span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">status_full =</span> <span class="fu">case_when</span>(Status <span class="sc">==</span> <span class="st">"F"</span>  <span class="sc">~</span> <span class="st">"Free"</span>, Status <span class="sc">==</span> <span class="st">"PF"</span> <span class="sc">~</span> <span class="st">"Partly Free"</span>, Status <span class="sc">==</span> <span class="st">"NF"</span> <span class="sc">~</span> <span class="st">"Not Free"</span>, <span class="cn">TRUE</span> <span class="sc">~</span> Status))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+</section>
+<section id="data-display" class="level2">
+<h2 class="anchored" data-anchor-id="data-display">Data Display</h2>
+<p>Before visualizing the relationship between PR and CL, it’s helpful to see the distribution of freedom categories. This shows how many countries fall into each category in the 2022 dataset.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>tuesdata <span class="ot">&lt;-</span> tidytuesdayR<span class="sc">::</span><span class="fu">tt_load</span>(<span class="st">'2022-02-22'</span>)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>freedom <span class="ot">&lt;-</span> tuesdata<span class="sc">$</span>freedom</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>freedom <span class="ot">&lt;-</span> freedom <span class="sc">|&gt;</span> </span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">status_full =</span> <span class="fu">case_when</span>(Status <span class="sc">==</span> <span class="st">"F"</span>  <span class="sc">~</span> <span class="st">"Free"</span>, Status <span class="sc">==</span> <span class="st">"PF"</span> <span class="sc">~</span> <span class="st">"Partly Free"</span>, Status <span class="sc">==</span> <span class="st">"NF"</span> <span class="sc">~</span> <span class="st">"Not Free"</span>, <span class="cn">TRUE</span> <span class="sc">~</span> Status))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>freedom <span class="sc">|&gt;</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(status_full)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 2
+  status_full     n
+  &lt;chr&gt;       &lt;int&gt;
+1 Free         2219
+2 Not Free     1257
+3 Partly Free  1503</code></pre>
 </div>
+</div>
+</section>
+<section id="visualization" class="level2">
+<h2 class="anchored" data-anchor-id="visualization">Visualization</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(freedom, <span class="fu">aes</span>(<span class="at">x =</span> CL, <span class="at">y =</span> PR, <span class="at">color =</span> status_full)) <span class="sc">+</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>(<span class="at">width =</span> <span class="fl">0.2</span>, <span class="at">height =</span> <span class="fl">0.2</span>, <span class="at">alpha =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Free"</span> <span class="ot">=</span> <span class="st">"seagreen3"</span>, <span class="st">"Partly Free"</span> <span class="ot">=</span> <span class="st">"goldenrod"</span>, <span class="st">"Not Free"</span> <span class="ot">=</span> <span class="st">"firebrick"</span>)) <span class="sc">+</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Political Rights v.s. Civil Liberties Showing Freedom Status"</span>, <span class="at">x =</span> <span class="st">"Civil Liberties Score(1 = most, 7 = least)"</span>, <span class="at">y =</span> <span class="st">"Political Rights Score(1 = most, 7 = least)"</span>, <span class="at">color =</span> <span class="st">"Status"</span>) <span class="sc">+</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(freedom, <span class="fu">aes</span>(<span class="at">x =</span> CL, <span class="at">y =</span> PR, <span class="at">color =</span> status_full)) <span class="sc">+</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>(<span class="at">width =</span> <span class="fl">0.2</span>, <span class="at">height =</span> <span class="fl">0.2</span>, <span class="at">alpha =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Free"</span> <span class="ot">=</span> <span class="st">"seagreen3"</span>, <span class="st">"Partly Free"</span> <span class="ot">=</span> <span class="st">"goldenrod"</span>, <span class="st">"Not Free"</span> <span class="ot">=</span> <span class="st">"firebrick"</span>)) <span class="sc">+</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Political Rights v.s. Civil Liberties Showing Freedom Status"</span>, <span class="at">x =</span> <span class="st">"Civil Liberties Score(1 = most, 7 = least)"</span>, <span class="at">y =</span> <span class="st">"Political Rights Score(1 = most, 7 = least)"</span>, <span class="at">color =</span> <span class="st">"Status"</span>) <span class="sc">+</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div>
+<div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="freedom_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="freedom_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" alt="A scatterplot showing civil liberties scores on the x-axis and political rights scores on the y-axis, with each country colored by its overall freedom classification (Free, Partly Free, Not Free)." width="672"></p>
+<figcaption>Civil liberties and political rights across world countries, colored by overall Freedom House status.</figcaption>
 </figure>
 </div>
 </div>
 </div>
+</section>
+<section id="interpretation" class="level2">
+<h2 class="anchored" data-anchor-id="interpretation">Interpretation</h2>
+<p>Most countries classified as Free are clustered in the lower-left of the plot, with both low political rights and civil liberties scores(indicating greater freedom). Not Free countries cluster in the upper-right, reflecting more restrictive conditions. Partly Free countries span the middle, showing a wide range of governance environments. This pattern visually reinforces Freedom House’s classification scheme, with PR and CL scores tending to move together and align with the overall freedom rating.</p>
+</section>
+<section id="references" class="level2">
+<h2 class="anchored" data-anchor-id="references">References</h2>
+<p><strong>Freedom House.</strong> (2022). <em>Freedom in the World 2022 Dataset.</em><br>
+<a href="https://freedomhouse.org/report/freedom-world" class="uri">https://freedomhouse.org/report/freedom-world</a></p>
+<p><strong>TidyTuesday / rfordatascience.</strong> (2022). <em>TidyTuesday: Freedom in the World (2022-02-22).</em><br>
+<a href="https://github.com/rfordatascience/tidytuesday/tree/main/data/2022/2022-02-22" class="uri">https://github.com/rfordatascience/tidytuesday/tree/main/data/2022/2022-02-22</a></p>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

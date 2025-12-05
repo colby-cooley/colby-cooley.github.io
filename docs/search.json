@@ -9,37 +9,212 @@
   {
     "objectID": "sf_rents.html",
     "href": "sf_rents.html",
-    "title": "San Francisco Rents",
+    "title": "Bay Area Rental Prices",
     "section": "",
-    "text": "Original Source: Pennington, Kate (2018). Bay Area Craigslist Rental Housing Posts, 2000-2018. Retrieved from https://github.com/katepennington/historic_bay_area_craigslist_housing_posts/blob/master/clean_2000_2018.csv.zip.\nTidyTuesday Page: https://github.com/rfordatascience/tidytuesday/tree/main/data/2022/2022-07-05\n\nlibrary(tidyverse)\n\n\ntuesdata &lt;- tidytuesdayR::tt_load('2022-07-05')\nrent &lt;- tuesdata$rent\n\n\nggplot(rent, aes(x = price)) +\n  geom_boxplot() +\n  facet_wrap(\"county\") +\n  labs(title = \"Prices of Rentals in Different San Francisco Counties\", x = \"Price(USD)\") +\n  theme_minimal()"
+    "text": "This analysis explores rental listing prices across San Francisco Bay Area counties using publicly available Craigslist housing listings. The dataset includes rental prices, locations, and listing details over 18 years (2000–2018). The goal of this page is to provide a clear visualization of rental price distributions across counties in the Bay Area."
+  },
+  {
+    "objectID": "sf_rents.html#introduction",
+    "href": "sf_rents.html#introduction",
+    "title": "Bay Area Rental Prices",
+    "section": "",
+    "text": "This analysis explores rental listing prices across San Francisco Bay Area counties using publicly available Craigslist housing listings. The dataset includes rental prices, locations, and listing details over 18 years (2000–2018). The goal of this page is to provide a clear visualization of rental price distributions across counties in the Bay Area."
+  },
+  {
+    "objectID": "sf_rents.html#load-packages-and-data",
+    "href": "sf_rents.html#load-packages-and-data",
+    "title": "Bay Area Rental Prices",
+    "section": "Load Packages and Data",
+    "text": "Load Packages and Data\n\nlibrary(tidyverse)\n\n# Load TidyTuesday dataset for 2022-07-05\ntuesdata &lt;- tidytuesdayR::tt_load('2022-07-05')\nrent &lt;- tuesdata$rent"
+  },
+  {
+    "objectID": "sf_rents.html#data-display",
+    "href": "sf_rents.html#data-display",
+    "title": "Bay Area Rental Prices",
+    "section": "Data Display",
+    "text": "Data Display\nBefore plotting, we first inspect the structure and distribution of the dataset.\n\nrent |&gt;\n  count(county, sort = TRUE)\n\n# A tibble: 11 × 2\n   county            n\n   &lt;chr&gt;         &lt;int&gt;\n 1 san francisco 55730\n 2 santa clara   41023\n 3 alameda       25630\n 4 san mateo     25238\n 5 contra costa  13605\n 6 sonoma        12422\n 7 marin         11237\n 8 santa cruz     8590\n 9 solano         3742\n10 napa           2185\n11 &lt;NA&gt;           1394\n\n\nThis helps us understand which countries have more rental listings represented in the dataset.\n\nrent |&gt;\n  summarise(\n    min_price = min(price, na.rm = TRUE),\n    median_price = median(price, na.rm = TRUE),\n    max_price = max(price, na.rm = TRUE)\n  )\n\n# A tibble: 1 × 3\n  min_price median_price max_price\n      &lt;dbl&gt;        &lt;dbl&gt;     &lt;dbl&gt;\n1       220         1800     40000\n\n\nThis gives a quick overview of price ranges before visualizing county-level differences."
+  },
+  {
+    "objectID": "sf_rents.html#visualization",
+    "href": "sf_rents.html#visualization",
+    "title": "Bay Area Rental Prices",
+    "section": "Visualization",
+    "text": "Visualization\n\nggplot(rent, aes(x = price)) +\n  geom_boxplot() +\n  facet_wrap(\"county\") +\n  labs(title = \"Prices of Rentals in Different San Francisco Counties\", x = \"Price(USD)\") +\n  theme_minimal()\n\n\n\n\nDistribution of Bay Area rental prices across counties."
+  },
+  {
+    "objectID": "sf_rents.html#interpretation",
+    "href": "sf_rents.html#interpretation",
+    "title": "Bay Area Rental Prices",
+    "section": "Interpretation",
+    "text": "Interpretation\nThe boxplots reveal clear variation in rental prices across Bay Area counties. Counties such as San Francisco and San Mateo display substantially higher median rental prices and larger spreads. Meanwhile, counties like Solano or Contra Costa show lower and more concentrated rental prices."
+  },
+  {
+    "objectID": "sf_rents.html#references",
+    "href": "sf_rents.html#references",
+    "title": "Bay Area Rental Prices",
+    "section": "References",
+    "text": "References\nPennington, K. (2018). Bay Area Craigslist Rental Housing Posts, 2000–2018.\nhttps://github.com/katepennington/historic_bay_area_craigslist_housing_posts/blob/master/clean_2000_2018.csv.zip\nTidyTuesday / rfordatascience. (2022). TidyTuesday: San Francisco Rent (2022-07-05).\nhttps://github.com/rfordatascience/tidytuesday/tree/main/data/2022/2022-07-05"
   },
   {
     "objectID": "movie_genre.html",
     "href": "movie_genre.html",
-    "title": "Movie Genre",
+    "title": "Movie Genre and IMDb Ratings",
     "section": "",
-    "text": "Movie ratings are widely used to evaluate films. People often claim that some genres are “better” than others based on audience scores. However, this perception might just be random variation. Understanding whether genre truly influences ratings could help studios and critics separate taste patterns from statistical noise. By examining a dataset of movies and their ratings, we can statistically test whether observed differences in ratings across genres are likely to occur by chance. A permutation test is perfect for this because it will simply test whether the association between genre and rating is stronger than we would expect if genres had no effect.\n\nlibrary(tidyverse)\n\nThe following dataset contains information on the genre and rating 10,000 different movies in the IMDb database. We are specifically interested in these variables because we want to observe the relationship between them.\n\nimdb &lt;- read_csv(\n  \"data/imdb-movies-dataset.csv\"\n) |&gt;\n  mutate(Genre2 = str_extract(Genre, \"^[A-z-]+\")) |&gt;\n  select(Title, Genre2, Rating) \n\nThe following plot shows the differences in the distributions of different genre’s movie ratings based on this data. You can see how some genres have higher ratings than others and vice versa.\n\nggplot(imdb, aes(x = Genre2, y = Rating, fill = Genre2)) +\n  geom_boxplot() +\n  labs(title = \"Rating Distribution of Movies in Different Genres\", x = \"Genre\", fill = \"Genre\") +\n  theme(axis.text.x = element_text(angle = 45, hjust = 1))\n\n\n\n\n\n\n\n\nOur research question will have the following hypotheses: - Null Hypothesis(Ho): Movie ratings are independent of genre. Any observed differences in average ratings across genres are due to random chance. - Alternative Hypothesis(Ha): Movie ratings differ by genre; some genres consistently receive higher or lower ratings.\nOur observed statistic, which measures how much genre-specific averages deviate from the overall mean rating based on the data, is as follows:\n\nimdb |&gt; summarize(avg_rating = mean(Rating, na.rm = TRUE))\n\n# A tibble: 1 × 1\n  avg_rating\n       &lt;dbl&gt;\n1       6.44\n\nmean_rating &lt;- 6.43861\nimdb |&gt;\n  group_by(Genre2) |&gt;\n  summarize(ni = n(), xi = mean(Rating, na.rm = TRUE)) |&gt;\n  summarize(stat = sum(ni * (xi - mean_rating)^2, na.rm = TRUE))\n\n# A tibble: 1 × 1\n   stat\n  &lt;dbl&gt;\n1 1086.\n\nobs_stat &lt;- 1085.533\n\nNow we need a function that can simulate/permute this calculation while assuming genres are randomly assigned to movies(the null hypothesis(Ho)). In other words, each simulation randomly reassigns genres to movies to break any real association between genre and rating.\n\nimdb_sim &lt;- function(x) {\n  sim_value &lt;- imdb |&gt;\n    mutate(Genre2 = sample(Genre2, n(), replace = FALSE)) |&gt;\n    group_by(Genre2) |&gt;\n    summarize(ni = n(), xi = mean(Rating, na.rm = TRUE)) |&gt;\n    summarize(stat = sum(ni * (xi - mean_rating)^2, na.rm = TRUE)) |&gt;\n    pull(stat)\n  return(sim_value)\n}\n\nThen we can use mapping to run this simulation/permutation many times so that we can be more confident in the results.\n\nset.seed(47)\nnull_stats &lt;- map_dbl(c(1:1000), ~imdb_sim(.x))\n\nThe following plot shows the distribution of the one-thousand simulated/permuted values as well as a vertical line at the observed statistic.\n\nnull_df &lt;- data.frame(stat = null_stats)\n\nggplot(null_df, aes(x = stat)) +\n  geom_histogram(binwidth = 1, color = \"black\") +\n  geom_vline(xintercept = obs_stat, color = \"red\", linetype = \"dashed\", size = 1.2) +\n  annotate(\"text\", x = obs_stat, y = 50, label = \"Observed Statistic\", \n           color = \"red\", angle = 90, vjust = -0.5, hjust = 1.2) +\n  labs(\n    title = \"Null Distribution of Permuted Statistics\",\n    x = \"Simulated Statistic\",\n    y = \"Frequency\"\n  ) +\n  theme_minimal()\n\n\n\n\n\n\n\n\nAs you can see, not a single one of the thousand permuted statistics even came close to being at least as extreme as the observed statistic, meaning the p-value for this test is 0. This means that we have very strong evidence supporting the alternative hypthesis(Ha) that movie ratings differ by genre and that some genres consistently receive higher or lower ratings.\nReferences: Barthwal, Aman. IMDb Movies Data. Kaggle, 2024.\nhttps://www.kaggle.com/datasets/amanbarthwal/imdb-movies-data"
+    "text": "Movie ratings are widely used to evaluate films. People often claim that some genres are “better” than others based on audience scores. However, this perception might just stem from random variation. Understanding whether genre truly influences ratings could help studios and critics separate taste patterns from statistical noise. By examining a dataset of movies and their ratings, we can statistically test whether genre is associated with IMDb ratings in a broader population sense. We will try to see if the observed differences in the ratings across genres of a sample are likely to occur by chance. A permutation test is perfect for this because it will simply test whether the association between genre and rating is stronger than we would expect if genres had no effect.\n\nlibrary(tidyverse)"
+  },
+  {
+    "objectID": "movie_genre.html#introduction",
+    "href": "movie_genre.html#introduction",
+    "title": "Movie Genre and IMDb Ratings",
+    "section": "",
+    "text": "Movie ratings are widely used to evaluate films. People often claim that some genres are “better” than others based on audience scores. However, this perception might just stem from random variation. Understanding whether genre truly influences ratings could help studios and critics separate taste patterns from statistical noise. By examining a dataset of movies and their ratings, we can statistically test whether genre is associated with IMDb ratings in a broader population sense. We will try to see if the observed differences in the ratings across genres of a sample are likely to occur by chance. A permutation test is perfect for this because it will simply test whether the association between genre and rating is stronger than we would expect if genres had no effect.\n\nlibrary(tidyverse)"
+  },
+  {
+    "objectID": "movie_genre.html#import-and-wrangle-data",
+    "href": "movie_genre.html#import-and-wrangle-data",
+    "title": "Movie Genre and IMDb Ratings",
+    "section": "Import and Wrangle Data",
+    "text": "Import and Wrangle Data\nThe following dataset contains information on the genre and rating of 10,000 different movies in the IMDb database. We are specifically interested in these variables because we want to observe the relationship between them.\n\n# Read data\nimdb &lt;- read_csv(\n  \"data/imdb-movies-dataset.csv\"\n) |&gt;\n  \n  # Extract a primary genre to reduce sparsity\n  mutate(Genre2 = str_extract(Genre, \"^[A-z-]+\")) |&gt;\n  \n  # Keep only the variables needed for this analysis\n  select(Title, Genre2, Rating)"
+  },
+  {
+    "objectID": "movie_genre.html#visualizing-ratings-by-genre",
+    "href": "movie_genre.html#visualizing-ratings-by-genre",
+    "title": "Movie Genre and IMDb Ratings",
+    "section": "Visualizing Ratings by Genre",
+    "text": "Visualizing Ratings by Genre\nThe following plot shows the differences in the distributions of different genre’s movie ratings based on this data. You can see how some genres have higher median ratings than others and vice versa.\n\nggplot(imdb, aes(x = Genre2, y = Rating, fill = Genre2)) +\n  geom_boxplot() +\n  labs(title = \"Rating Distribution of Movies in Different Genres\", x = \"Genre\", fill = \"Genre\") +\n  theme(axis.text.x = element_text(angle = 45, hjust = 1))\n\n\n\n\nRating distributions by primary genre (boxplots). Each facet displays the distribution of IMDb ratings for the listed genre."
+  },
+  {
+    "objectID": "movie_genre.html#hypotheses",
+    "href": "movie_genre.html#hypotheses",
+    "title": "Movie Genre and IMDb Ratings",
+    "section": "Hypotheses",
+    "text": "Hypotheses\nH₀ (null): The model that generates movie ratings is the same for all genres (genre has no effect). Any observed differences across genres are due to chance.\nHₐ (alternative): The model that generates ratings differs by genre; therefore, some genres have systematically different mean ratings in the population."
+  },
+  {
+    "objectID": "movie_genre.html#test-statistic",
+    "href": "movie_genre.html#test-statistic",
+    "title": "Movie Genre and IMDb Ratings",
+    "section": "Test Statistic",
+    "text": "Test Statistic\nWe use an ANOVA-style test statistic that weights squared deviations of each genre mean from the overall mean by genre sample size:\n\\[\nT = \\sum_i n_i (\\bar{x}_i - \\bar{x})^2\n\\]\nwhere \\(n_i\\) is the number of movies in genre \\(i\\), \\(\\bar{x}_i\\) the genre mean, and \\(\\bar{x}\\) the overall mean. A larger \\(T\\) indicates larger between-genre differences relative to the overall mean.\n\nimdb |&gt; summarize(avg_rating = mean(Rating, na.rm = TRUE))\n\n# A tibble: 1 × 1\n  avg_rating\n       &lt;dbl&gt;\n1       6.44\n\nmean_rating &lt;- 6.43861\nimdb |&gt;\n  group_by(Genre2) |&gt;\n  summarize(ni = n(), xi = mean(Rating, na.rm = TRUE)) |&gt;\n  summarize(stat = sum(ni * (xi - mean_rating)^2, na.rm = TRUE))\n\n# A tibble: 1 × 1\n   stat\n  &lt;dbl&gt;\n1 1086.\n\nobs_stat &lt;- 1085.533"
+  },
+  {
+    "objectID": "movie_genre.html#permutation-test",
+    "href": "movie_genre.html#permutation-test",
+    "title": "Movie Genre and IMDb Ratings",
+    "section": "Permutation Test",
+    "text": "Permutation Test\nNow we need a function that can simulate/permute this calculation while assuming genres are randomly assigned to movies(the null hypothesis(Ho)). In other words, each simulation randomly reassigns genres to movies to break any real association between genre and rating.\n\nimdb_sim &lt;- function(x) {\n  sim_value &lt;- imdb |&gt;\n    mutate(Genre2 = sample(Genre2, n(), replace = FALSE)) |&gt;\n    group_by(Genre2) |&gt;\n    summarize(ni = n(), xi = mean(Rating, na.rm = TRUE)) |&gt;\n    summarize(stat = sum(ni * (xi - mean_rating)^2, na.rm = TRUE)) |&gt;\n    pull(stat)\n  return(sim_value)\n}\n\nThen we can use mapping to run this simulation/permutation many times so that we can be more confident in the results.\n\nset.seed(47)\nnull_stats &lt;- map_dbl(c(1:1000), ~imdb_sim(.x))\n\nnull_df &lt;- data.frame(stat = null_stats)"
+  },
+  {
+    "objectID": "movie_genre.html#null-distribution-vs-observed-statistic",
+    "href": "movie_genre.html#null-distribution-vs-observed-statistic",
+    "title": "Movie Genre and IMDb Ratings",
+    "section": "Null Distribution vs Observed Statistic",
+    "text": "Null Distribution vs Observed Statistic\nThe following plot shows the distribution of the one-thousand simulated/permuted values as well as a vertical line at the observed statistic.\n\nggplot(null_df, aes(x = stat)) +\n  geom_histogram(binwidth = 1, color = \"black\") +\n  geom_vline(xintercept = obs_stat, color = \"red\", linetype = \"dashed\", size = 1.2) +\n  annotate(\"text\", x = obs_stat, y = 50, label = \"Observed Statistic\", \n           color = \"red\", angle = 90, vjust = -0.5, hjust = 1.2) +\n  labs(\n    title = \"Null Distribution of Permuted Statistics\",\n    x = \"Simulated Statistic\",\n    y = \"Frequency\"\n  ) +\n  theme_minimal()\n\n\n\n\nNull distribution of the permuted test statistic (1000 permutations). The red dashed line shows the observed statistic from the real data."
+  },
+  {
+    "objectID": "movie_genre.html#conclusion",
+    "href": "movie_genre.html#conclusion",
+    "title": "Movie Genre and IMDb Ratings",
+    "section": "Conclusion",
+    "text": "Conclusion\nAs you can see, not a single one of the thousand permuted statistics even came close to being at least as extreme as the observed statistic, meaning the p-value for this test is 0. This means that we have very strong evidence supporting the alternative hypthesis(Ha) that movie ratings differ by genre and that some genres consistently receive higher or lower ratings. This conclusion is about the population model (i.e., whether genre is associated with ratings in general) because the permutation test simulates the null model of no genre effect and compares the observed statistic to that null."
+  },
+  {
+    "objectID": "movie_genre.html#references",
+    "href": "movie_genre.html#references",
+    "title": "Movie Genre and IMDb Ratings",
+    "section": "References",
+    "text": "References\nBarthwal, Aman. IMDb Movies Data. Kaggle, 2024.\nhttps://www.kaggle.com/datasets/amanbarthwal/imdb-movies-data"
   },
   {
     "objectID": "freedom.html",
     "href": "freedom.html",
-    "title": "Freedom",
+    "title": "Global Freedom Indicators",
     "section": "",
-    "text": "Original Source: Freedom House & United Nations. (2022). Freedom Index / Freedom in the World dataset. Used in #TidyTuesday (2022-02-22). Freedom House; United Nations.\nTidyTuesday Page: https://github.com/rfordatascience/tidytuesday/tree/main/data/2022/2022-02-22\n\nlibrary(tidyverse)\n\n\ntuesdata &lt;- tidytuesdayR::tt_load('2022-02-22')\n\nfreedom &lt;- tuesdata$freedom\n\nfreedom &lt;- freedom |&gt; \n  mutate(status_full = case_when(Status == \"F\"  ~ \"Free\", Status == \"PF\" ~ \"Partly Free\", Status == \"NF\" ~ \"Not Free\", TRUE ~ Status))\n\n\nggplot(freedom, aes(x = CL, y = PR, color = status_full)) +\n  geom_jitter(width = 0.2, height = 0.2, alpha = 0.7) +\n  scale_color_manual(values = c(\"Free\" = \"seagreen3\", \"Partly Free\" = \"goldenrod\", \"Not Free\" = \"firebrick\")) +\n  labs(title = \"Political Rights v.s. Civil Liberties Showing Freedom Status\", x = \"Civil Liberties Score(1 = most, 7 = least)\", y = \"Political Rights Score(1 = most, 7 = least)\", color = \"Status\") +\n  theme_minimal()"
+    "text": "This analysis explores worldwide patterns in civil liberties and political rights using data from Freedom House and republished through TidyTuesday. The dataset provides annual scores on political rights and civil liberties, two important measures of democratic conditions, each on a scale from 1(most free) to 7(least free). Countries are also categorized as Free, Partly Free, or Not Free. The goal of this analysis is to visualize how these indicators relate to each other and how freedom status clusters across countries."
+  },
+  {
+    "objectID": "freedom.html#introduction",
+    "href": "freedom.html#introduction",
+    "title": "Global Freedom Indicators",
+    "section": "",
+    "text": "This analysis explores worldwide patterns in civil liberties and political rights using data from Freedom House and republished through TidyTuesday. The dataset provides annual scores on political rights and civil liberties, two important measures of democratic conditions, each on a scale from 1(most free) to 7(least free). Countries are also categorized as Free, Partly Free, or Not Free. The goal of this analysis is to visualize how these indicators relate to each other and how freedom status clusters across countries."
+  },
+  {
+    "objectID": "freedom.html#load-packages-and-data",
+    "href": "freedom.html#load-packages-and-data",
+    "title": "Global Freedom Indicators",
+    "section": "Load Packages and Data",
+    "text": "Load Packages and Data\n\nlibrary(tidyverse)\n\n# Load 2022 TidyTuesday dataset\ntuesdata &lt;- tidytuesdayR::tt_load('2022-02-22')\nfreedom &lt;- tuesdata$freedom\n\n# Clean Status variable for readability\nfreedom &lt;- freedom |&gt; \n  mutate(status_full = case_when(Status == \"F\"  ~ \"Free\", Status == \"PF\" ~ \"Partly Free\", Status == \"NF\" ~ \"Not Free\", TRUE ~ Status))"
+  },
+  {
+    "objectID": "freedom.html#data-display",
+    "href": "freedom.html#data-display",
+    "title": "Global Freedom Indicators",
+    "section": "Data Display",
+    "text": "Data Display\nBefore visualizing the relationship between PR and CL, it’s helpful to see the distribution of freedom categories. This shows how many countries fall into each category in the 2022 dataset.\n\nfreedom |&gt;\n  count(status_full)\n\n# A tibble: 3 × 2\n  status_full     n\n  &lt;chr&gt;       &lt;int&gt;\n1 Free         2219\n2 Not Free     1257\n3 Partly Free  1503"
+  },
+  {
+    "objectID": "freedom.html#visualization",
+    "href": "freedom.html#visualization",
+    "title": "Global Freedom Indicators",
+    "section": "Visualization",
+    "text": "Visualization\n\nggplot(freedom, aes(x = CL, y = PR, color = status_full)) +\n  geom_jitter(width = 0.2, height = 0.2, alpha = 0.7) +\n  scale_color_manual(values = c(\"Free\" = \"seagreen3\", \"Partly Free\" = \"goldenrod\", \"Not Free\" = \"firebrick\")) +\n  labs(title = \"Political Rights v.s. Civil Liberties Showing Freedom Status\", x = \"Civil Liberties Score(1 = most, 7 = least)\", y = \"Political Rights Score(1 = most, 7 = least)\", color = \"Status\") +\n  theme_minimal()\n\n\n\n\nCivil liberties and political rights across world countries, colored by overall Freedom House status."
+  },
+  {
+    "objectID": "freedom.html#interpretation",
+    "href": "freedom.html#interpretation",
+    "title": "Global Freedom Indicators",
+    "section": "Interpretation",
+    "text": "Interpretation\nMost countries classified as Free are clustered in the lower-left of the plot, with both low political rights and civil liberties scores(indicating greater freedom). Not Free countries cluster in the upper-right, reflecting more restrictive conditions. Partly Free countries span the middle, showing a wide range of governance environments. This pattern visually reinforces Freedom House’s classification scheme, with PR and CL scores tending to move together and align with the overall freedom rating."
+  },
+  {
+    "objectID": "freedom.html#references",
+    "href": "freedom.html#references",
+    "title": "Global Freedom Indicators",
+    "section": "References",
+    "text": "References\nFreedom House. (2022). Freedom in the World 2022 Dataset.\nhttps://freedomhouse.org/report/freedom-world\nTidyTuesday / rfordatascience. (2022). TidyTuesday: Freedom in the World (2022-02-22).\nhttps://github.com/rfordatascience/tidytuesday/tree/main/data/2022/2022-02-22"
   },
   {
     "objectID": "index.html",
     "href": "index.html",
     "title": "Colby Cooley",
     "section": "",
-    "text": "Hi there! I’m Colby. I am a student at Pomona College and I’m interested in studying data science, economics, and math. I also play for the Pomona-Pitzer football team and love hanging out with friends in my spare time. Poke around my website to learn more!"
+    "text": "Hi there! I’m Colby. I am a student at Pomona College, and I’m interested in studying data science, economics, and math. I also play for the Pomona-Pitzer football team and love hanging out with friends in my spare time. This website is a place for me to display a variety of different projects that I’ve worked on. Poke around to learn more!"
   },
   {
     "objectID": "obama_tweets.html",
     "href": "obama_tweets.html",
     "title": "Obama Tweets",
     "section": "",
-    "text": "Data from: National Archives and Records Administration. (n.d.). Obama White House social media archive: Tweets. Retrieved from Obama Federal Archives: Barack Obama Presidential Library. obamalibrary.gov\n\nlibrary(tidyverse)\n\n\nobama_tweets &lt;- read_csv(unz(\"data/POTUS111716.zip\", \"tweets.csv\"))\nobama_tweets &lt;- obama_tweets |&gt; select(text, timestamp)\n\n\nobama_tweets &lt;- obama_tweets |&gt; mutate(hashtags = str_extract_all(text, \"(?&lt;=#)\\\\w+\"))\n\n\nobama_hashtags &lt;- obama_tweets |&gt; select(hashtags) |&gt; unnest(hashtags) |&gt; group_by(hashtags) |&gt; summarize(count = n()) |&gt; arrange(desc(count)) |&gt; head(5)\n\nThe following plot shows Obama’s most used hashtags, revealing which issues he emphasized publicly. It also illustrates some of the ways that the former president used Twitter to engage with the general public.\n\nggplot(obama_hashtags, aes(x = hashtags, y = count, fill = hashtags)) +\n  geom_col(show.legend = FALSE) +\n  labs(title = \"Frequency of Obama's Top Five Most Used Twitter Hashtags\", x = \"Hashtag\", y = \"Frequency\")\n\n\n\n\n\n\n\n\n\nobama_tweets &lt;- obama_tweets |&gt; \n  mutate(text_clean = str_replace_all(text, \"https?://\\\\S+|@\\\\w+\", \"\"), text_clean = str_to_lower(text_clean))\n\n\nobama_tweets &lt;- obama_tweets |&gt; mutate(collective_count = str_count(text_clean, \"\\\\b(we|us|our|ours|we're|we've)\\\\b\"), individual_count = str_count(text_clean, \"\\\\b(i|me|my|mine|i've|i'm)\\\\b\"))\n\n\nobama_pronouns &lt;- obama_tweets |&gt; pivot_longer(c(collective_count, individual_count), names_to = \"pronoun_type\", values_to = \"count\")\n\nThe following plot shows the distribution of collective pronouns(i.e. we/us/our) in Obama’s tweets as well as the distribution of individual pronouns(i.e. I/me/my) in Obama’s tweets. It gives us insight into how Obama purposefully focused his tweets on unity and shared identity rather than on himself.\n\nggplot(obama_pronouns, aes(x = count)) +\n  facet_grid(\"pronoun_type\", labeller = labeller(pronoun_type = c(collective_count = \"Collective\",\n  individual_count = \"Individual\"))) +\n  geom_boxplot() +\n  scale_x_log10() +\n  labs(title = \"Distribution of Collective vs. Individual Pronouns in Obama's Tweets (Log Scale)\", x = \"Pronoun Count per Tweet (log scale)\")"
+    "text": "This analysis uses archived tweets from Barrack Obama’s Twitter page to explore two aspects of the former president’s communication on Twitter. First, the hashtags he used most frequently, and second, his use of collective versus individual pronouns. Tweets are taken from the publicly released Obama Administration social media archive, which includes all tweets posted by @POTUS (Obama) during his presidency. The dataset provides a useful lens into how he framed political messaging.\n\nlibrary(tidyverse)\n\nobama_tweets &lt;- \n  read_csv(unz(\"data/POTUS111716.zip\",\n               \"tweets.csv\")) |&gt;\n  select(text, timestamp) |&gt;\n  \n  # extract hashtags\n  mutate(hashtags = str_extract_all(text,\n                                    \"(?&lt;=#)\\\\w+\")) |&gt;\n  \n  # clean text and remove URLs/usernames\n  mutate(text_clean = str_replace_all(text,\n                                      \"https?://\\\\S+|@\\\\w+\", \n                                      \"\"), \n         text_clean = str_to_lower(text_clean)) |&gt; \n  \n  # count collective and individual pronouns\n  mutate(collective_count = str_count(text_clean, \n                                      \"\\\\b(we|us|our|ours|we're|we've)\\\\b\"),\n         individual_count = str_count(text_clean, \n                                      \"\\\\b(i|me|my|mine|i've|i'm)\\\\b\"))"
+  },
+  {
+    "objectID": "obama_tweets.html#introduction",
+    "href": "obama_tweets.html#introduction",
+    "title": "Obama Tweets",
+    "section": "",
+    "text": "This analysis uses archived tweets from Barrack Obama’s Twitter page to explore two aspects of the former president’s communication on Twitter. First, the hashtags he used most frequently, and second, his use of collective versus individual pronouns. Tweets are taken from the publicly released Obama Administration social media archive, which includes all tweets posted by @POTUS (Obama) during his presidency. The dataset provides a useful lens into how he framed political messaging.\n\nlibrary(tidyverse)\n\nobama_tweets &lt;- \n  read_csv(unz(\"data/POTUS111716.zip\",\n               \"tweets.csv\")) |&gt;\n  select(text, timestamp) |&gt;\n  \n  # extract hashtags\n  mutate(hashtags = str_extract_all(text,\n                                    \"(?&lt;=#)\\\\w+\")) |&gt;\n  \n  # clean text and remove URLs/usernames\n  mutate(text_clean = str_replace_all(text,\n                                      \"https?://\\\\S+|@\\\\w+\", \n                                      \"\"), \n         text_clean = str_to_lower(text_clean)) |&gt; \n  \n  # count collective and individual pronouns\n  mutate(collective_count = str_count(text_clean, \n                                      \"\\\\b(we|us|our|ours|we're|we've)\\\\b\"),\n         individual_count = str_count(text_clean, \n                                      \"\\\\b(i|me|my|mine|i've|i'm)\\\\b\"))"
+  },
+  {
+    "objectID": "obama_tweets.html#most-common-hashtags",
+    "href": "obama_tweets.html#most-common-hashtags",
+    "title": "Obama Tweets",
+    "section": "Most Common Hashtags",
+    "text": "Most Common Hashtags\nFirst, we must extract and count all of his hashtags.\n\nobama_hashtags &lt;- \n  obama_tweets |&gt; \n  select(hashtags) |&gt; \n  unnest(hashtags) |&gt; \n  group_by(hashtags) |&gt; \n  summarize(count = n()) |&gt; \n  arrange(desc(count)) |&gt; \n  head(5)\n\nThen, we can visualize the data.\n\nggplot(obama_hashtags, \n       aes(x = hashtags, \n           y = count, \n           fill = hashtags)) +\n  geom_col(show.legend = FALSE) +\n  labs(title = \"Frequency of Obama's Top Five Most Used Twitter Hashtags\", \n       x = \"Hashtag\", \n       y = \"Frequency\")\n\n\n\n\nObama’s five most frequently used hashtags.\n\n\n\n\nThe plot reveals which issues he emphasized publicly and illustrates some of the ways that the former president used Twitter to engage with the general public."
+  },
+  {
+    "objectID": "obama_tweets.html#collective-vs.-individual-pronoun-usage",
+    "href": "obama_tweets.html#collective-vs.-individual-pronoun-usage",
+    "title": "Obama Tweets",
+    "section": "Collective vs. Individual Pronoun Usage",
+    "text": "Collective vs. Individual Pronoun Usage\nFirst, we must get the totals for each type of pronoun.\n\ntotal_pronouns &lt;- obama_tweets |&gt;\n  summarise(\n    collective_total = sum(collective_count),\n    individual_total = sum(individual_count)\n  ) |&gt;\n  pivot_longer(cols = everything(), names_to = \"pronoun_type\", values_to = \"total\")\n\nThen, we can visualize the data.\n\nggplot(total_pronouns, aes(x = pronoun_type, y = total, fill = pronoun_type)) +\n  geom_col(show.legend = FALSE) +\n  labs(\n    title = \"Total Usage of Collective vs. Individual Pronouns\",\n    x = \"Pronoun Type\",\n    y = \"Total Count\"\n  ) +\n  theme_minimal()\n\n\n\n\nComparison of collective vs. individual pronoun usage in Obama’s tweets.\n\n\n\n\nThe plot shows how Obama uses collective pronouns much more often than individual ones, and gives us insight into how Obama purposefully focused his tweets on unity and shared identity rather than on himself."
+  },
+  {
+    "objectID": "obama_tweets.html#references",
+    "href": "obama_tweets.html#references",
+    "title": "Obama Tweets",
+    "section": "References",
+    "text": "References\nNational Archives and Records Administration. (n.d.). Obama White House Social Media Archive: Tweets.\nRetrieved from the Barack Obama Presidential Library:\nhttps://www.obamalibrary.gov/research/obama-white-house-social-media-archive"
   },
   {
     "objectID": "taxi.html",

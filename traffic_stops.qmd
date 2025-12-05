@@ -31,6 +31,7 @@ con_traffic <- DBI::dbConnect(
 To address this question, I will attempt to combine three separate SQL tables into a unified dataset. I will then try to visualize the resulting search patterns to explore whether certain racial groups experience higher search rates during specific hours of the day.
 
 The following table combines the data from all three tables into one, big table. It groups the data by the hour of the day and by the race of the driver. It also gives the number of stops, number of searches, and percentage of stops that were searches for each of these groups.
+
 ```{sql connection=con_traffic, output.var="hourly"}
 SELECT
   hour,
@@ -65,11 +66,13 @@ FROM (
 ) AS hourly
 ORDER BY hour, subject_race
 ```
+
 ```{r}
 hourly
 ```
 
 The following plot shows clear differences in stop frequency across hours of the day. Traffic stops increase substantially during daylight hours and decline late at night. Racial groups follow broadly similar patterns, though some groups appear to have disproportionately more stops during certain hours.
+
 ```{r}
 library(tidyverse)
 
@@ -85,6 +88,7 @@ theme_minimal()
 ```
 
 The following figure illustrates how search likelihood varies across the day and across racial groups. Certain groups show consistently higher search rates than others, even during hours where the number of stops is low.
+
 ```{r}
 ggplot(hourly, aes(x = hour, y = pct_searched, color = subject_race)) +
 geom_line(size = 1) +
@@ -99,7 +103,6 @@ theme_minimal()
 
 This analysis reveals that both stop frequency and search rates vary substantially across time of day and across racial groups. Stops are most common in daytime and early evening hours, but search rates do not always follow this pattern. Instead, some racial groups experience higher search rates consistently throughout the day.
 
-References:
-- Pierson, E., Simoiu, C., Overgoor, J., Corbett-Davies, S., Ramachandran, V., Phillips, C., Shroff, R., & Goel, S. (2020). **A large-scale analysis of racial disparities in police stops across the United States.** *Nature Human Behaviour.* [https://www.nature.com/articles/s41562-020-0858-1](https://www.nature.com/articles/s41562-020-0858-1)
+References: - Pierson, E., Simoiu, C., Overgoor, J., Corbett-Davies, S., Ramachandran, V., Phillips, C., Shroff, R., & Goel, S. (2020). **A large-scale analysis of racial disparities in police stops across the United States.** *Nature Human Behaviour.* <https://www.nature.com/articles/s41562-020-0858-1>
 
-- Stanford Open Policing Project. (n.d.). **Data portal.** [https://openpolicing.stanford.edu/data/](https://openpolicing.stanford.edu/data/)
+-   Stanford Open Policing Project. (n.d.). **Data portal.** <https://openpolicing.stanford.edu/data/>

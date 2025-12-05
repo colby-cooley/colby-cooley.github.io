@@ -8,9 +8,9 @@
 
 <meta name="author" content="Colby Cooley">
 <meta name="dcterms.date" content="2025-10-27">
-<meta name="description" content="Investigation into whether or not a movie’s genre affects its IMDb rating">
+<meta name="description" content="Investigation into whether or not a movie’s genre is associated with its IMDb rating">
 
-<title>Movie Genre – Colby Cooley</title>
+<title>Movie Genre and IMDb Ratings – Colby Cooley</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -106,6 +106,35 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="styles.css">
 </head>
@@ -131,10 +160,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <a class="nav-link" href="./index.html"> 
 <span class="menu-text">Home</span></a>
   </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="./about.html"> 
-<span class="menu-text">About</span></a>
-  </li>  
   <li class="nav-item dropdown ">
     <a class="nav-link dropdown-toggle" href="#" id="nav-menu-data-viz" role="link" data-bs-toggle="dropdown" aria-expanded="false">
  <span class="menu-text">Data Viz</span>
@@ -142,11 +167,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <ul class="dropdown-menu" aria-labelledby="nav-menu-data-viz">    
         <li>
     <a class="dropdown-item" href="./freedom.html">
- <span class="dropdown-text">Freedom</span></a>
+ <span class="dropdown-text">Global Freedom Indicators</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="./sf_rents.html">
- <span class="dropdown-text">San Francisco Rents</span></a>
+ <span class="dropdown-text">Bay Area Rental Prices</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="./obama_tweets.html">
@@ -165,7 +190,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <ul class="dropdown-menu" aria-labelledby="nav-menu-simulations">    
         <li>
     <a class="dropdown-item" href="./movie_genre.html">
- <span class="dropdown-text">Movie Genre</span></a>
+ <span class="dropdown-text">Movie Genre and IMDb Ratings</span></a>
   </li>  
     </ul>
   </li>
@@ -192,25 +217,39 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#import-and-wrangle-data" id="toc-import-and-wrangle-data" class="nav-link" data-scroll-target="#import-and-wrangle-data">Import and Wrangle Data</a></li>
+  <li><a href="#visualizing-ratings-by-genre" id="toc-visualizing-ratings-by-genre" class="nav-link" data-scroll-target="#visualizing-ratings-by-genre">Visualizing Ratings by Genre</a></li>
+  <li><a href="#hypotheses" id="toc-hypotheses" class="nav-link" data-scroll-target="#hypotheses">Hypotheses</a></li>
+  <li><a href="#test-statistic" id="toc-test-statistic" class="nav-link" data-scroll-target="#test-statistic">Test Statistic</a></li>
+  <li><a href="#permutation-test" id="toc-permutation-test" class="nav-link" data-scroll-target="#permutation-test">Permutation Test</a></li>
+  <li><a href="#null-distribution-vs-observed-statistic" id="toc-null-distribution-vs-observed-statistic" class="nav-link" data-scroll-target="#null-distribution-vs-observed-statistic">Null Distribution vs Observed Statistic</a></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
-<main class="content column-page" id="quarto-document-content">
+<main class="content column-page-left" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Movie Genre</h1>
+<h1 class="title">Movie Genre and IMDb Ratings</h1>
 </div>
 
 <div>
   <div class="description">
-    <p>Investigation into whether or not a movie’s genre affects its IMDb rating</p>
+    <p>Investigation into whether or not a movie’s genre is associated with its IMDb rating</p>
   </div>
 </div>
 
 
-<div class="quarto-title-meta column-page">
+<div class="quarto-title-meta column-page-left">
 
     <div>
     <div class="quarto-title-meta-heading">Author</div>
@@ -234,34 +273,59 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>Movie ratings are widely used to evaluate films. People often claim that some genres are “better” than others based on audience scores. However, this perception might just be random variation. Understanding whether genre truly influences ratings could help studios and critics separate taste patterns from statistical noise. By examining a dataset of movies and their ratings, we can statistically test whether observed differences in ratings across genres are likely to occur by chance. A permutation test is perfect for this because it will simply test whether the association between genre and rating is stronger than we would expect if genres had no effect.</p>
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<p>Movie ratings are widely used to evaluate films. People often claim that some genres are “better” than others based on audience scores. However, this perception might just stem from random variation. Understanding whether genre truly influences ratings could help studios and critics separate taste patterns from statistical noise. By examining a dataset of movies and their ratings, we can statistically test whether genre is associated with IMDb ratings in a broader population sense. We will try to see if the observed differences in the ratings across genres of a sample are likely to occur by chance. A permutation test is perfect for this because it will simply test whether the association between genre and rating is stronger than we would expect if genres had no effect.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>The following dataset contains information on the genre and rating 10,000 different movies in the IMDb database. We are specifically interested in these variables because we want to observe the relationship between them.</p>
+</section>
+<section id="import-and-wrangle-data" class="level2">
+<h2 class="anchored" data-anchor-id="import-and-wrangle-data">Import and Wrangle Data</h2>
+<p>The following dataset contains information on the genre and rating of 10,000 different movies in the IMDb database. We are specifically interested in these variables because we want to observe the relationship between them.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>imdb <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"data/imdb-movies-dataset.csv"</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Genre2 =</span> <span class="fu">str_extract</span>(Genre, <span class="st">"^[A-z-]+"</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Title, Genre2, Rating) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Read data</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>imdb <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"data/imdb-movies-dataset.csv"</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Extract a primary genre to reduce sparsity</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Genre2 =</span> <span class="fu">str_extract</span>(Genre, <span class="st">"^[A-z-]+"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Keep only the variables needed for this analysis</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Title, Genre2, Rating) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>The following plot shows the differences in the distributions of different genre’s movie ratings based on this data. You can see how some genres have higher ratings than others and vice versa.</p>
+</section>
+<section id="visualizing-ratings-by-genre" class="level2">
+<h2 class="anchored" data-anchor-id="visualizing-ratings-by-genre">Visualizing Ratings by Genre</h2>
+<p>The following plot shows the differences in the distributions of different genre’s movie ratings based on this data. You can see how some genres have higher median ratings than others and vice versa.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(imdb, <span class="fu">aes</span>(<span class="at">x =</span> Genre2, <span class="at">y =</span> Rating, <span class="at">fill =</span> Genre2)) <span class="sc">+</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Rating Distribution of Movies in Different Genres"</span>, <span class="at">x =</span> <span class="st">"Genre"</span>, <span class="at">fill =</span> <span class="st">"Genre"</span>) <span class="sc">+</span></span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust =</span> <span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div>
+<div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="movie_genre_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="movie_genre_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" alt="Boxplots of IMDb ratings for each primary genre (Genre2). Shows median, IQR, and outliers." width="672"></p>
+<figcaption>Rating distributions by primary genre (boxplots). Each facet displays the distribution of IMDb ratings for the listed genre.</figcaption>
 </figure>
 </div>
 </div>
 </div>
-<p>Our research question will have the following hypotheses: - Null Hypothesis(Ho): Movie ratings are independent of genre. Any observed differences in average ratings across genres are due to random chance. - Alternative Hypothesis(Ha): Movie ratings differ by genre; some genres consistently receive higher or lower ratings.</p>
-<p>Our observed statistic, which measures how much genre-specific averages deviate from the overall mean rating based on the data, is as follows:</p>
+</section>
+<section id="hypotheses" class="level2">
+<h2 class="anchored" data-anchor-id="hypotheses">Hypotheses</h2>
+<p>H₀ (null): The model that generates movie ratings is the same for all genres (genre has no effect). Any observed differences across genres are due to chance.</p>
+<p>Hₐ (alternative): The model that generates ratings differs by genre; therefore, some genres have systematically different mean ratings in the population.</p>
+</section>
+<section id="test-statistic" class="level2">
+<h2 class="anchored" data-anchor-id="test-statistic">Test Statistic</h2>
+<p>We use an ANOVA-style test statistic that weights squared deviations of each genre mean from the overall mean by genre sample size:</p>
+<p><span class="math display">\[
+T = \sum_i n_i (\bar{x}_i - \bar{x})^2
+\]</span></p>
+<p>where <span class="math inline">\(n_i\)</span> is the number of movies in genre <span class="math inline">\(i\)</span>, <span class="math inline">\(\bar{x}_i\)</span> the genre mean, and <span class="math inline">\(\bar{x}\)</span> the overall mean. A larger <span class="math inline">\(T\)</span> indicates larger between-genre differences relative to the overall mean.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>imdb <span class="sc">|&gt;</span> <span class="fu">summarize</span>(<span class="at">avg_rating =</span> <span class="fu">mean</span>(Rating, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -283,6 +347,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>obs_stat <span class="ot">&lt;-</span> <span class="fl">1085.533</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+</section>
+<section id="permutation-test" class="level2">
+<h2 class="anchored" data-anchor-id="permutation-test">Permutation Test</h2>
 <p>Now we need a function that can simulate/permute this calculation while assuming genres are randomly assigned to movies(the null hypothesis(Ho)). In other words, each simulation randomly reassigns genres to movies to break any real association between genre and rating.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>imdb_sim <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
@@ -298,36 +365,47 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Then we can use mapping to run this simulation/permutation many times so that we can be more confident in the results.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">47</span>)</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>null_stats <span class="ot">&lt;-</span> <span class="fu">map_dbl</span>(<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">1000</span>), <span class="sc">~</span><span class="fu">imdb_sim</span>(.x))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>null_stats <span class="ot">&lt;-</span> <span class="fu">map_dbl</span>(<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">1000</span>), <span class="sc">~</span><span class="fu">imdb_sim</span>(.x))</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>null_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">stat =</span> null_stats)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+</section>
+<section id="null-distribution-vs-observed-statistic" class="level2">
+<h2 class="anchored" data-anchor-id="null-distribution-vs-observed-statistic">Null Distribution vs Observed Statistic</h2>
 <p>The following plot shows the distribution of the one-thousand simulated/permuted values as well as a vertical line at the observed statistic.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>null_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">stat =</span> null_stats)</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(null_df, <span class="fu">aes</span>(<span class="at">x =</span> stat)) <span class="sc">+</span></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="dv">1</span>, <span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">+</span></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> obs_stat, <span class="at">color =</span> <span class="st">"red"</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">size =</span> <span class="fl">1.2</span>) <span class="sc">+</span></span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> obs_stat, <span class="at">y =</span> <span class="dv">50</span>, <span class="at">label =</span> <span class="st">"Observed Statistic"</span>, </span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>           <span class="at">color =</span> <span class="st">"red"</span>, <span class="at">angle =</span> <span class="dv">90</span>, <span class="at">vjust =</span> <span class="sc">-</span><span class="fl">0.5</span>, <span class="at">hjust =</span> <span class="fl">1.2</span>) <span class="sc">+</span></span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Null Distribution of Permuted Statistics"</span>,</span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Simulated Statistic"</span>,</span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Frequency"</span></span>
-<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(null_df, <span class="fu">aes</span>(<span class="at">x =</span> stat)) <span class="sc">+</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="dv">1</span>, <span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">+</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> obs_stat, <span class="at">color =</span> <span class="st">"red"</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">size =</span> <span class="fl">1.2</span>) <span class="sc">+</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> obs_stat, <span class="at">y =</span> <span class="dv">50</span>, <span class="at">label =</span> <span class="st">"Observed Statistic"</span>, </span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>           <span class="at">color =</span> <span class="st">"red"</span>, <span class="at">angle =</span> <span class="dv">90</span>, <span class="at">vjust =</span> <span class="sc">-</span><span class="fl">0.5</span>, <span class="at">hjust =</span> <span class="fl">1.2</span>) <span class="sc">+</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Null Distribution of Permuted Statistics"</span>,</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Simulated Statistic"</span>,</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Frequency"</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div>
+<div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="movie_genre_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="movie_genre_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" alt="Histogram of permuted test statistics with a dashed vertical line showing the observed statistic." width="672"></p>
+<figcaption>Null distribution of the permuted test statistic (1000 permutations). The red dashed line shows the observed statistic from the real data.</figcaption>
 </figure>
 </div>
 </div>
 </div>
-<p>As you can see, not a single one of the thousand permuted statistics even came close to being at least as extreme as the observed statistic, meaning the p-value for this test is 0. This means that we have very strong evidence supporting the alternative hypthesis(Ha) that movie ratings differ by genre and that some genres consistently receive higher or lower ratings.</p>
-<p>References: Barthwal, Aman. <em>IMDb Movies Data</em>. Kaggle, 2024.<br>
-<a href="https://www.kaggle.com/datasets/amanbarthwal/imdb-movies-data">https://www.kaggle.com/datasets/amanbarthwal/imdb-movies-data</a></p>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>As you can see, not a single one of the thousand permuted statistics even came close to being at least as extreme as the observed statistic, meaning the p-value for this test is 0. This means that we have very strong evidence supporting the alternative hypthesis(Ha) that movie ratings differ by genre and that some genres consistently receive higher or lower ratings. This conclusion is about the population model (i.e., whether genre is associated with ratings in general) because the permutation test simulates the null model of no genre effect and compares the observed statistic to that null.</p>
+</section>
+<section id="references" class="level2">
+<h2 class="anchored" data-anchor-id="references">References</h2>
+<p>Barthwal, Aman. <em>IMDb Movies Data</em>. Kaggle, 2024.<br>
+<a href="https://www.kaggle.com/datasets/amanbarthwal/imdb-movies-data" class="uri">https://www.kaggle.com/datasets/amanbarthwal/imdb-movies-data</a></p>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
